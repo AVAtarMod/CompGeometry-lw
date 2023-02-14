@@ -1,6 +1,8 @@
 #include <iostream>
 
-void task1();
+#include "part2.hpp"
+
+void task1(); //define in own files
 
 int main(int argc, char const *argv[])
 {
@@ -31,11 +33,19 @@ int main(int argc, char const *argv[])
          task1();
          std::cout << "-----\n";
          break;
+      case 5:
+         std::cout << "Task #5\n";
+         task2_1();
+         std::cout << "-----\n";
+         break;
+      case 6:
+         std::cout << "Task #6\n";
+         task2_2();
+         std::cout << "-----\n";
+         break;
       default:
          std::cerr << "Error: task number is unsupported or cannot be recognized.\n";
          break;
       }
    }
 }
-
-void task1() {}
