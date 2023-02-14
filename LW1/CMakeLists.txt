@@ -18,7 +18,9 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # create the executable
-add_executable(main main.cpp)
+add_executable(main 
+   main.cpp part2.cpp ${data}
+)
 
 # Copy resources to build dir
 file(GLOB_RECURSE data files/*)

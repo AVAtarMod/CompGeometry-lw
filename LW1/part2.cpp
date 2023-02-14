@@ -9,43 +9,48 @@ namespace t2_1
 {
    void read(std::ifstream &in, std::vector<Point> &out)
    {
-      size_t testsCount;
-      while (!in.eof())
+      size_t testsCount = 0;
+      in >> testsCount;
+      const size_t testSize = 3;
+      out = std::vector<Point>(testsCount * testSize);
+      for (size_t i = 0; i < testsCount; ++i)
       {
-         in >> testsCount;
-         const size_t testSize = 3;
-         out = std::vector<Point>(testsCount * testSize);
-         for (size_t i = 0; i < testsCount; ++i)
+         for (size_t iPoint = 0; iPoint < 3; ++iPoint)
          {
-            for (size_t iPoint = 0; iPoint < 3; ++iPoint)
-            {
-               int x, y;
-               in >> x >> y;
-               out[i * testSize + iPoint] = Point(x, y);
-            }
+            int x, y;
+            in >> x >> y;
+            out[i * testSize + iPoint] = Point(x, y);
          }
       }
    }
    void solve(std::ofstream &out, std::vector<Point> &in)
    {
-      
    }
 
 } // namespace t2_1
 
 void task2_1()
 {
-   std::ifstream in("task2_1in.txt");
-   std::ofstream out("task2_1out.txt");
-   if (!in || !out)
+   const char *in_file = "task2_1in.txt";
+   const char *out_file = "task2_1out.txt";
+
+   std::ifstream in(in_file);
+   std::ofstream out(out_file);
+
+   if (!in)
    {
-      std::cerr << "Files not exist or not accessible\n";
+      std::cerr << "File " << in_file << " not exist or not accessible\n";
    }
+   else if (!out)
+   {
+      std::cerr << "File " << out_file << " not exist or not accessible\n";
+   }
+
    else
    {
       std::vector<Point> tests;
       t2_1::read(in, tests);
-      t2_1::solve(out,tests);
+      t2_1::solve(out, tests);
    }
    out.close();
    in.close();
