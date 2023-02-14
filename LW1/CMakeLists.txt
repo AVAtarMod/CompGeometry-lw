@@ -20,7 +20,11 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # create the executable
 add_executable(main main.cpp)
 
+# Copy resources to build dir
+file(GLOB_RECURSE data files/*)
+file(COPY ${data} DESTINATION .)
+
 message("EnvironmentVariableName = ${EnvironmentVariableName}")
-add_subdirectory(${CMAKE_DEFAULT_INCLUDE_PATH}/Geometry_lib geometry_lib_bin)
+add_subdirectory(${CMAKE_DEFAULT_INCLUDE_PATH}/lib_cppgeometry geometry_lib_bin)
 target_include_directories(main PUBLIC ${CMAKE_DEFAULT_INCLUDE_PATH})
 target_link_libraries(main shared)
