@@ -2,7 +2,7 @@
 
 #include "part2.hpp"
 
-void task1(); //define in own files
+void task1(){}; //define in own files
 
 int main(int argc, char const *argv[])
 {
