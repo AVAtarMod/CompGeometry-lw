@@ -30,8 +30,6 @@ foreach(file ${data})
    configure_file(${file} . COPYONLY)
 endforeach()
 
-
-message("EnvironmentVariableName = ${EnvironmentVariableName}")
 add_subdirectory(${CMAKE_DEFAULT_INCLUDE_PATH}/lib_cppgeometry geometry_lib_bin)
 target_include_directories(main PUBLIC ${CMAKE_DEFAULT_INCLUDE_PATH})
 target_link_libraries(main shared)
