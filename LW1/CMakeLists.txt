@@ -26,7 +26,10 @@ add_executable(main
 
 # Copy resources to build dir
 file(GLOB_RECURSE data files/*)
-file(COPY ${data} DESTINATION .)
+foreach(file ${data})
+   configure_file(${file} . COPYONLY)
+endforeach()
+
 
 message("EnvironmentVariableName = ${EnvironmentVariableName}")
 add_subdirectory(${CMAKE_DEFAULT_INCLUDE_PATH}/lib_cppgeometry geometry_lib_bin)
