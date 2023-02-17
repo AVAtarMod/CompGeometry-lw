@@ -8,6 +8,8 @@ else()
    return()
 endif()
 
+set (CMAKE_CXX_STANDARD 11)
+
 # Export no symbols by default (if the compiler supports it).
 # This makes e.g. GCC's "visibility behavior" consistent with MSVC's. 
 # On Windows/MSVC this is a noop.
@@ -24,9 +26,10 @@ add_executable(main
 
 # Copy resources to build dir
 file(GLOB_RECURSE data files/*)
-file(COPY ${data} DESTINATION .)
+foreach(file ${data})
+   configure_file(${file} . COPYONLY)
+endforeach()
 
-message("EnvironmentVariableName = ${EnvironmentVariableName}")
 add_subdirectory(${CMAKE_DEFAULT_INCLUDE_PATH}/lib_cppgeometry geometry_lib_bin)
 target_include_directories(main PUBLIC ${CMAKE_DEFAULT_INCLUDE_PATH})
 target_link_libraries(main shared)
