@@ -20,7 +20,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # create the executable
 add_executable(main 
    main.cpp part2.cpp ${data}
-)
+ "part1.hpp" "part1.cpp")
 
 # Copy resources to build dir
 file(GLOB_RECURSE data files/*)

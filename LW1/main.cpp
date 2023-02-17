@@ -1,5 +1,6 @@
 #include <iostream>
-
+#include <string>
+#include "part1.hpp"
 #include "part2.hpp"
 
 void task1(){}; //define in own files
@@ -30,7 +31,7 @@ int main(int argc, char const *argv[])
       {
       case 1:
          std::cout << "Task #1\n";
-         task1();
+         task1_1();
          std::cout << "-----\n";
          break;
       case 5:
