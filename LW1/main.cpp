@@ -1,29 +1,24 @@
-#include <iostream>
-#include <string>
 #include "part1.hpp"
 #include "part2.hpp"
+#include <iostream>
+#include <string>
 
-void task1(){}; //define in own files
+void task1() {}; // define in own files
 
-int main(int argc, char const *argv[])
+int main(int argc, char const* argv[])
 {
    bool isArgsEmpty = false;
-   if (argc <= 1)
-   {
+   if (argc <= 1) {
       isArgsEmpty = true;
       std::cout << "Enter program number to start: ";
       argc++;
    }
-   for (int i = 1; i < argc; i++)
-   {
+   for (int i = 1; i < argc; i++) {
       int choice;
-      if (isArgsEmpty)
-      {
+      if (isArgsEmpty) {
          std::cin >> choice;
          std::cin.ignore(32767, '\n');
-      }
-      else
-      {
+      } else {
          choice = std::stoi(argv[i]);
       }
 

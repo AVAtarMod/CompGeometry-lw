@@ -2,8 +2,8 @@
 #include <iostream>
 #include <vector>
 
-#include "lib_cppgeometry/Point.hpp"
 #include "lib_cppgeometry/LineSegment.hpp"
+#include "lib_cppgeometry/Point.hpp"
 
 std::vector<Point> read(std::ifstream& in)
 {
@@ -85,8 +85,8 @@ void task1_2()
     {
         std::vector<Point> points = read(in);
         int i = t1_2::cycle(points);
-        if (i == 1) std::cout << "Против часовой" << std::endl;
-        else if (i == -1) std::cout << "По часовой" << std::endl;
+        if (i == 1) std::cout << "Counterclockwise orientation" << std::endl;
+        else if (i == -1) std::cout << "Clockwise orientation" << std::endl;
     }
     in.close();
 }
