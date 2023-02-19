@@ -34,6 +34,21 @@ int main(int argc, char const *argv[])
          task1_1();
          std::cout << "-----\n";
          break;
+      case 2:
+          std::cout << "Task #1\n";
+          task1_2();
+          std::cout << "-----\n";
+          break;
+      case 3:
+          std::cout << "Task #1\n";
+          task1_3();
+          std::cout << "-----\n";
+          break;
+      case 4:
+          std::cout << "Task #1\n";
+          task1_4();
+          std::cout << "-----\n";
+          break;
       case 5:
          std::cout << "Task #5\n";
          task2_1();
