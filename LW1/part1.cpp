@@ -35,9 +35,8 @@ namespace t1_1
 {
     bool isLine(const std::vector<Point> points)
     {
-        double a = Point::angle(points[0], points[1], points[2]) * 180 / acos(-1.0);
-        if (isZero(a) ||
-            isZero(a - 180))
+        double _cos = Point::cos(points[0], points[1], points[2]);
+        if (isZero(_cos - 1))
             return true;
         else return false;
     }
@@ -64,11 +63,11 @@ namespace t1_2
 {
     int cycle(std::vector<Point> points)
     {
-        Point p1 = (points[0] - points[2]) ^ (points[1] - points[2]);
-        Point p2 = (points[1] - points[0]) ^ (points[2] - points[0]);
-        Point p3 = (points[2] - points[1]) ^ (points[0] - points[1]);
-        if (p1[2] < 0 && p2[2] < 0 && p3[2] < 0) return -1;
-        else if (p1[2] > 0 && p2[2] > 0 && p3[2] > 0) return 1;
+        double p1 = (points[0] - points[2]) | (points[1] - points[2]);
+        double p2 = (points[1] - points[0]) | (points[2] - points[0]);
+        double p3 = (points[2] - points[1]) | (points[0] - points[1]);
+        if (p1 < 0 && p2 < 0 && p3 < 0) return -1;
+        else if (p1 > 0 && p2 > 0 && p3 > 0) return 1;
         else return 0;
     }
 }
@@ -94,7 +93,7 @@ void task1_2()
 
 namespace t1_3
 {
-    bool equal(double a, double b) //Точки находятся по одну сторону от отрезка?
+    bool equal(double a, double b) //Are the points on the same side of the segment?
     {
         if (isZero(a) || isZero(b) || (sign(a) == sign(b))) return true;
         else return false;
@@ -102,11 +101,11 @@ namespace t1_3
 
     bool isIntersection(std::vector<Point> points)
     {
-        double p1 = ((points[1] - points[0]) ^ (points[2] - points[0]))[2];
-        double p2 = ((points[2] - points[0]) ^ (points[3] - points[0]))[2];
-        double p3 = ((points[0] - points[1]) ^ (points[3] - points[1]))[2];
-        double p4 = ((points[3] - points[1]) ^ (points[2] - points[1]))[2];
-        if (isZero(p1) && isZero(p2)) //Отрезки лежат на одной прямой?
+        double p1 = (points[1] - points[0]) | (points[2] - points[0]);
+        double p2 = (points[2] - points[0]) | (points[3] - points[0]);
+        double p3 = (points[0] - points[1]) | (points[3] - points[1]);
+        double p4 = (points[3] - points[1]) | (points[2] - points[1]);
+        if (isZero(p1) && isZero(p2)) //Do the segments lie on the same line?
         {
             double dis = Point::distance(points[0], points[2]);
             double dis1 = Point::distance(points[0], points[1]) +
@@ -118,8 +117,8 @@ namespace t1_3
                 return true;
             return false;
         }
-        else if (equal(p1, p2) || equal(p3, p4)) return false;
-        return true;
+        else if (equal(p1, p2) || equal(p3, p4)) return true;
+        return false;
     }
 }
 
@@ -174,7 +173,7 @@ namespace t1_4
 
 void task1_4()
 {
-    const char* in_file = "task1_3in.txt";
+    const char* in_file = "task1_4in.txt";
     std::ifstream in(in_file);
 
     if (!in)
