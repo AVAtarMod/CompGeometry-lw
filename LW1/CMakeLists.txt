@@ -8,7 +8,7 @@ else()
    return()
 endif()
 
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
 
 # Export no symbols by default (if the compiler supports it).
 # This makes e.g. GCC's "visibility behavior" consistent with MSVC's. 
