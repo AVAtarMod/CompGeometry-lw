@@ -122,12 +122,12 @@ class CMakeBuild(build_ext):
       if not build_temp.exists():
          build_temp.mkdir(parents=True)
 
-      # subprocess.run(
-      #     ["cmake", ext.sourcedir, *cmake_args], cwd=build_temp, check=True
-      # )
-      # subprocess.run(
-      #     ["cmake", "--build", ".", *build_args], cwd=build_temp, check=True
-      # )
+      subprocess.run(
+          ["cmake", ext.sourcedir, *cmake_args], cwd=build_temp, check=True
+      )
+      subprocess.run(
+          ["cmake", "--build", ".", *build_args], cwd=build_temp, check=True
+      )
 
 
 # The information here can also be placed in setup.cfg - better separation of
