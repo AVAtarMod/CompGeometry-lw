@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(LW1)
+project(Template)
 
 if (NOT "$ENV{CMAKE_DEFAULT_INCLUDE_PATH}" STREQUAL "")
     set(CMAKE_DEFAULT_INCLUDE_PATH "$ENV{CMAKE_DEFAULT_INCLUDE_PATH}" CACHE INTERNAL "Path for external projects and dependencies")
@@ -21,9 +21,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # create the executable
-add_executable(main 
-   main.cpp part2.cpp ${data}
- "part1.hpp" "part1.cpp")
+add_executable(main)
 
 # Copy resources to build dir
 if (EXISTS files)
