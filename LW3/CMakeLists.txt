@@ -32,6 +32,5 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMENT "Installing wrapper with pip..."
 )
 endif()
-if ("$ENV{lib_cppgeometry_wrapper_PIP_SETUP}" STREQUAL "")
-add_custom_target(ide_target COMMAND pip install --force-reinstall .)
-endif()
+
+add_custom_target(ide_target SOURCES main.py ${wrapper_sources})
