@@ -12,5 +12,6 @@ PYBIND11_MODULE(lib_cppgeometry_wrapper, m)
      .def(py::init<const Point&>())
      .def(py::init<double, double>())
      .def("size", &Point::size)
-     .def("dimension", &Point::size);
+     .def("dimension", &Point::size)
+     .def("getRandom", &Point::getRandom);
 }

@@ -122,11 +122,13 @@ class CMakeBuild(build_ext):
       if not build_temp.exists():
          build_temp.mkdir(parents=True)
 
+      custom_env = os.environ.copy()
+      custom_env["lib_cppgeometry_wrapper_PIP_SETUP"] = "true"
       subprocess.run(
-          ["cmake", ext.sourcedir, *cmake_args], cwd=build_temp, check=True
+          ["cmake", ext.sourcedir, *cmake_args], cwd=build_temp, check=True, env=custom_env
       )
       subprocess.run(
-          ["cmake", "--build", ".", *build_args], cwd=build_temp, check=True
+          ["cmake", "--build", ".", *build_args], cwd=build_temp, check=True,env=custom_env
       )
 
 
