@@ -1,34 +1,50 @@
 import lib_cppgeometry_wrapper as l
+import dearpygui_ext.themes as dpg_ext
+import dearpygui.dearpygui as dpg
+import gui
 
-# import dearpygui.dearpygui as dpg
 
-# dpg.create_context()
+def window():
+   def print_me(sender):
+      print(f"Menu Item: {sender}")
+   w = dpg.add_window(label="Tutorial")
 
-# with dpg.window(tag="Primary Window"):
-#    with dpg.table(header_row=False):
+   with dpg.menu_bar(parent=w):
+      with dpg.menu(label="Сгенерировать точки"):
+         dpg.add_menu_item(label="Save", callback=print_me)
+         dpg.add_menu_item(label="Save As", callback=print_me)
 
-#       # use add_table_column to add columns to the table,
-#       # table columns use child slot 0
-#       dpg.add_table_column()
-#       dpg.add_table_column()
-#       dpg.add_table_column()
+         # with dpg.menu(label="Settings"):
+         #    dpg.add_menu_item(label="Setting 1",
+         #                      callback=print_me, check=True)
+         #    dpg.add_menu_item(label="Setting 2", callback=print_me)
 
-#       # add_table_next_column will jump to the next row
-#       # once it reaches the end of the columns
-#       # table next column use slot 1
-#       for i in range(0, 4):
-#          with dpg.table_row():
-#             for j in range(0, 3):
-#                dpg.add_text(f"Row{i} Column{j}")
-               
-#       dpg.add_text("Hello, world")
+      dpg.add_menu_item(label="Построить выпуклую оболочку", callback=print_me)
 
-# dpg.create_viewport(title='Custom Title', width=600, height=200)
-# dpg.setup_dearpygui()
-# dpg.show_viewport()
-# dpg.set_primary_window("Primary Window", True)
-# dpg.start_dearpygui()
-# dpg.destroy_context()
+      with dpg.menu(label="Помощь"):
+         dpg.add_checkbox(label="Pick Me", callback=print_me)
+         dpg.add_button(label="Press Me", callback=print_me)
+         dpg.add_color_picker(label="Color Me", callback=print_me)
+   dpg.set_primary_window(w, True)
 
-for i in dir(l):
-   print(i, "  ", type(getattr(l, i)))
+
+def viewport():
+   dpg.create_viewport(title='ConvexHull GUI',
+                       width=800, height=600)
+
+
+def fix_font(id: str | int):
+   dpg.add_font_range_hint(dpg.mvFontRangeHint_Cyrillic, parent=id)
+
+
+def main():
+   theme = dpg_ext.create_theme_imgui_light
+   font = ["assets/Montserrat-Regular.otf", 25]
+
+   items = [window, viewport]
+   params = gui.Parameters(items, theme, font[0], fix_font, font[1])
+   gui.create_gui(params)
+
+
+if __name__ == "__main__":
+   main()
