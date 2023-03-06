@@ -21,10 +21,7 @@ def window():
 
       dpg.add_menu_item(label="Построить выпуклую оболочку", callback=print_me)
 
-      with dpg.menu(label="Помощь"):
-         dpg.add_checkbox(label="Pick Me", callback=print_me)
-         dpg.add_button(label="Press Me", callback=print_me)
-         dpg.add_color_picker(label="Color Me", callback=print_me)
+      dpg.add_menu_item(label="Помощь")
    dpg.set_primary_window(w, True)
 
 
