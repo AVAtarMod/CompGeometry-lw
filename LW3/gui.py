@@ -2,6 +2,7 @@ import dearpygui.dearpygui as dpg
 from dataclasses import dataclass
 from typing import Callable
 
+
 @dataclass
 class Parameters:
    """   Parameters structure
@@ -16,6 +17,7 @@ class Parameters:
    font: str | None
    font_callback: Callable[[str | int], None] | None
    font_size: int = 12
+   debug: bool = False
 
 
 def create_gui(info: Parameters, default_viewport: bool = False):
@@ -41,5 +43,12 @@ def create_gui(info: Parameters, default_viewport: bool = False):
                           width=800, height=600)
    dpg.setup_dearpygui()
    dpg.show_viewport()
-   dpg.start_dearpygui()
+   if info.debug:
+      dpg.configure_app(manual_callback_management=True)
+      while dpg.is_dearpygui_running():
+         jobs = dpg.get_callback_queue()  # retrieves and clears queue
+         dpg.run_callbacks(jobs)
+         dpg.render_dearpygui_frame()
+   else:
+      dpg.start_dearpygui()
    dpg.destroy_context()
