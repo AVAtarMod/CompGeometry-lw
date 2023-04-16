@@ -2,8 +2,7 @@ import random
 import dearpygui.dearpygui as dpg
 import lib_cppgeometry_wrapper as l
 import events
-from main import current_method, method_map, plot_number_amount,\
-    point_min_val, point_max_val
+from vars import *
 
 _line_series_id = 0
 _get_label_labels = "ABCDEFGHIJKLMPRSTUFXYZ"

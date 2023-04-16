@@ -6,19 +6,7 @@ from typing import Callable
 from events import EventHandlerPool
 from event_handlers import *
 import sys
-
-# Default value
-plot_number_amount = 5
-point_min_val = 0
-point_max_val = 3
-
-method_map_keys = [
-    "Алгоритм Джарвиса (заворачивания подарка)", "Алгоритм Грэхема"]
-method_map = {method_map_keys[0]: l.ConvexHullMethod.JARVIS,
-              method_map_keys[1]: l.ConvexHullMethod.GRAHAM, }
-
-# Default value
-current_method = method_map_keys[0]
+from vars import *
 
 e_pool = {}
 
