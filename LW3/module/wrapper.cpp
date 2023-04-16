@@ -45,7 +45,8 @@ PYBIND11_MODULE(lib_cppgeometry_wrapper, m)
      .def("__getitem__",
           py::overload_cast<const char*>(&Point::operator[], py::const_))
      .def("__setitem__", py::overload_cast<const char*>(&Point::operator[]))
-     .def("__str__", &Point::to_string);
+     .def("__str__", &Point::to_string)
+     .def("__eq__",&Point::operator==);
 
    py::class_<Polygon>(m, "Polygon")
      .def(py::init<const std::vector<Point>&>(), "Construct N-point Polygon")

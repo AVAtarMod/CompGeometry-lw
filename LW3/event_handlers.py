@@ -2,13 +2,15 @@ import random
 import dearpygui.dearpygui as dpg
 import lib_cppgeometry_wrapper as l
 import events
-from main import current_method, method_map, plot_number_amount
+from main import current_method, method_map, plot_number_amount,\
+    point_min_val, point_max_val
 
 _line_series_id = 0
 _get_label_labels = "ABCDEFGHIJKLMPRSTUFXYZ"
 _points = {}
 _max_points = len(_get_label_labels)*10
 _axis_Oy_id = 0
+_lines = {}
 
 
 class ListBoxHandlers:
@@ -30,16 +32,41 @@ class TextHandlers:
       else:
          plot_number_amount = int(val)
 
+   @staticmethod
+   def point_set_min_val(sender, _0=None, _1=None):
+      global point_max_val, point_min_val
+      val = dpg.get_value(sender)
+
+      if val < point_max_val:
+         point_min_val = val
+      else:
+         dpg.set_value(sender, point_min_val)
+
+   @staticmethod
+   def point_set_max_val(sender, _0=None, _1=None):
+      global point_max_val, point_min_val
+      val = dpg.get_value(sender)
+
+      if val > point_min_val:
+         point_max_val = val
+      else:
+         dpg.set_value(sender, point_max_val)
+
 
 class ButtonHandlers:
    @staticmethod
    def make_hull_by_points(sender: int | str, _0=None, _1=None):
-      global _line_series_id, _points, _axis_Oy_id
+      global _line_series_id, _points, _axis_Oy_id, _lines
       raw_points = list(_points.values())
 
       convex_hull = l.Polygon.convexHull(l.VectorPoint(
           raw_points), method_map[current_method])
       x, y = get_series_from_point_list(convex_hull)  # type: ignore
+      for p in convex_hull:
+         if p in _points.values():
+            label_index = list(_points.values()).index(p)
+            label = list(_points.keys())[label_index]
+            _lines[label] = p
       dpg.delete_item(_line_series_id)
       _line_series_id = dpg.add_line_series(x, y,
                                             label='Многоугольник', parent=_axis_Oy_id)
@@ -50,7 +77,7 @@ class ButtonHandlers:
       _round_func = round_point(2)
 
       def __update_func(sender: int | str, _0=None, _1=None):
-         global _axis_Oy_id, _points, _line_series_id
+         global _axis_Oy_id, _points, _line_series_id, point_min_val, point_max_val
          _points = {}
          dpg.delete_item(plot_id, children_only=True)
          _line_series_id = 0
@@ -65,7 +92,7 @@ class ButtonHandlers:
          for _ in range(plot_number_amount):
             count, max_count = (0, 10)
             while True:
-               p = l.Point.getRandom(0, 3, 2)
+               p = l.Point.getRandom(point_min_val, point_max_val, 2)
                if count > max_count:
                   break
                if _round_func(p) not in list(map(_round_func, list(_points.values()))):
@@ -92,18 +119,28 @@ class PointHandlers:
    @staticmethod
    def update_lines():
       def __update_func(sender: int | str, _0=None, _1=None):
-         global _line_series_id, _points, _axis_Oy_id
-         val = dpg.get_item_label(sender)
+         global _line_series_id, _axis_Oy_id, _lines
+         label = dpg.get_item_label(sender)
          data = dpg.get_value(sender)
          new_x, new_y = data[0], data[1]
-         _points[val] = l.Point(new_x, new_y)
-         x, y = get_series_from_point_dict(points=_points)  # type: ignore
+         _lines[label] = l.Point(new_x, new_y)
+         x, y = get_series_from_point_dict(points=_lines)  # type: ignore
          id = str(_line_series_id)
          if len(id) > 0 and id != "0":
             dpg.delete_item(_line_series_id)
             _line_series_id = dpg.add_line_series(x, y,
                                                   label='Многоугольник',
                                                   parent=_axis_Oy_id)
+      return __update_func
+
+   @staticmethod
+   def update_points():
+      def __update_func(sender: int | str, _0=None, _1=None):
+         global _line_series_id, _axis_Oy_id, _points
+         label = dpg.get_item_label(sender)
+         data = dpg.get_value(sender)
+         new_x, new_y = data[0], data[1]
+         _points[label] = l.Point(new_x, new_y)
       return __update_func
 
    @staticmethod
