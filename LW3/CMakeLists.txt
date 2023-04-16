@@ -15,7 +15,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)  # optional, keep compiler extensions off
 
 file(GLOB library_sources ${CMAKE_DEFAULT_INCLUDE_PATH}/lib_cppgeometry/*.cpp)
 file(GLOB wrapper_sources module/*.cpp)
-
+string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/module/main.cpp" "" wrapper_sources ${wrapper_sources})
 find_package(Python3 COMPONENTS Interpreter Development)
 
 add_subdirectory(${CMAKE_DEFAULT_INCLUDE_PATH}/pybind11 pybind11_build)
