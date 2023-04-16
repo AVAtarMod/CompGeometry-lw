@@ -15,8 +15,8 @@ def window():
    global ui_text, plot_number_amount
 
    global button_bar_gen, button_make_hull, \
-      input_point_amount, input_method, text, plot, __points, \
-       input_min_val, input_max_val, input_min_val
+       input_point_amount, input_method, text, plot, __points, \
+       input_min_val, input_max_val, input_min_valm, input_theme
    __points = {}
 
    w = dpg.add_window()
@@ -46,6 +46,8 @@ def window():
             dpg.add_text(default_value="Max: ")
             input_max_val = dpg.add_input_int(
                 default_value=3, width=150, user_data="max")
+         dpg.add_text(default_value="Тема: ")
+         input_theme = dpg.add_listbox(items=list(themes.keys()))
 
    text = dpg.add_text(parent=w)
    plot = dpg.add_plot(label="График", height=-1, width=-1, parent=w)
@@ -62,6 +64,7 @@ def set_callbacks():
    e_pool["stc_settings_method"] = EventHandlerPool(input_method)
    e_pool["stc_settings_min_val"] = EventHandlerPool(input_min_val)
    e_pool["stc_settings_max_val"] = EventHandlerPool(input_max_val)
+   e_pool["stc_settings_theme"] = EventHandlerPool(input_theme)
    e_pool["stc_btn_make_hull"] = EventHandlerPool(button_make_hull)
    # Dynamic point pool
    e_pool["dyn_point"] = EventHandlerPool(0, False)
@@ -80,7 +83,7 @@ def set_callbacks():
    e_pool["stc_btn_make_hull"] += ButtonHandlers.make_hull_by_points
    e_pool["stc_settings_min_val"] += TextHandlers.point_set_min_val
    e_pool["stc_settings_max_val"] += TextHandlers.point_set_max_val
-
+   e_pool["stc_settings_theme"] += ListBoxHandlers.set_theme
 
 def viewport():
    dpg.create_viewport(title='ConvexHull GUI',
@@ -92,7 +95,7 @@ def fix_font(id: str | int):
 
 
 def main():
-   theme = dpg_ext.create_theme_imgui_light
+   theme = list(themes.values())[0]
    font = [sys.path[0] + "/assets/Montserrat-Regular.otf", 25]
 
    items = [window, viewport, set_callbacks]

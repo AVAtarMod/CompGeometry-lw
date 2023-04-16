@@ -18,6 +18,12 @@ class ListBoxHandlers:
       global current_method
       current_method = str(user_data)
 
+   @staticmethod
+   def set_theme(sender, user_data, _0=None):
+      global themes
+      theme = str(user_data)
+      dpg.bind_theme(themes[theme]())
+
 
 class TextHandlers:
    @staticmethod
@@ -57,7 +63,7 @@ class ButtonHandlers:
    def make_hull_by_points(sender: int | str, _0=None, _1=None):
       global _line_series_id, _points, _axis_Oy_id, _lines
       raw_points = list(_points.values())
-
+      _lines = {}
       convex_hull = l.Polygon.convexHull(l.VectorPoint(
           raw_points), method_map[current_method])
       x, y = get_series_from_point_list(convex_hull)  # type: ignore
@@ -122,14 +128,15 @@ class PointHandlers:
          label = dpg.get_item_label(sender)
          data = dpg.get_value(sender)
          new_x, new_y = data[0], data[1]
-         _lines[label] = l.Point(new_x, new_y)
-         x, y = get_series_from_point_dict(points=_lines)  # type: ignore
-         id = str(_line_series_id)
-         if len(id) > 0 and id != "0":
-            dpg.delete_item(_line_series_id)
-            _line_series_id = dpg.add_line_series(x, y,
-                                                  label='Многоугольник',
-                                                  parent=_axis_Oy_id)
+         if label in _lines.keys():
+            _lines[label] = l.Point(new_x, new_y)
+            x, y = get_series_from_point_dict(points=_lines)  # type: ignore
+            id = str(_line_series_id)
+            if len(id) > 0 and id != "0":
+               dpg.delete_item(_line_series_id)
+               _line_series_id = dpg.add_line_series(x, y,
+                                                     label='Многоугольник',
+                                                     parent=_axis_Oy_id)
       return __update_func
 
    @staticmethod
