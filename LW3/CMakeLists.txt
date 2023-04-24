@@ -14,8 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)  # optional, ensure standard is supported
 set(CMAKE_CXX_EXTENSIONS OFF)  # optional, keep compiler extensions off
 
 file(GLOB library_sources ${CMAKE_DEFAULT_INCLUDE_PATH}/lib_cppgeometry/*.cpp)
-file(GLOB wrapper_sources module/*.cpp)
-string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/module/main.cpp" "" wrapper_sources ${wrapper_sources})
+file(GLOB wrapper_sources module/wrapper.cpp)
 find_package(Python3 COMPONENTS Interpreter Development)
 
 add_subdirectory(${CMAKE_DEFAULT_INCLUDE_PATH}/pybind11 pybind11_build)
@@ -39,4 +38,8 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 )
 endif()
 
-add_custom_target(ide_target SOURCES main.py ${wrapper_sources})
+# create the executable
+add_executable(main module/main.cpp)
+ 
+target_include_directories(main PUBLIC ${CMAKE_DEFAULT_INCLUDE_PATH})
+target_link_libraries(main shared)
