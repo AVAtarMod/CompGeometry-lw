@@ -1,7 +1,6 @@
 import random
 import dearpygui.dearpygui as dpg
 import lib_cppgeometry_wrapper as l
-import events
 from vars import *
 
 _line_series_id = 0
@@ -77,7 +76,7 @@ class ButtonHandlers:
                                             label='Многоугольник', parent=_axis_Oy_id)
 
    @staticmethod
-   def generate_point(plot_id: int | str, point_ep: events.EventHandlerPool, disabled_items: list[int | str]):
+   def generate_point(plot_id: int | str, point_ep, disabled_items: list[int | str]):
 
       _round_func = round_point(2)
 
