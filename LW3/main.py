@@ -1,11 +1,10 @@
-from vars import *
-import lib_cppgeometry_wrapper as l
-import dearpygui_ext.themes as dpg_ext
+from event_handlers import *
 import dearpygui.dearpygui as dpg
+import lib_cppgeometry_wrapper as l
+from vars import *
 from pathlib import Path
 import importlib
 import sys
-from typing import Callable
 
 
 def import_parents(level=1):
@@ -27,7 +26,6 @@ if __name__ == '__main__' and __package__ is None or __package__ == '':
    import_parents(level=2)
    from ..lib.gui import gui
    from ..lib.gui.events import EventHandlerPool
-   from ..lib.gui.event_handlers import *
 
 
 e_pool = {}
