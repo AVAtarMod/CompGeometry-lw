@@ -1,34 +1,12 @@
-from vars import *
 import lib_cppgeometry_wrapper as l
 import dearpygui_ext.themes as dpg_ext
 import dearpygui.dearpygui as dpg
-from pathlib import Path
-import importlib
-import sys
+import gui
 from typing import Callable
-
-
-def import_parents(level=1):
-   global __package__
-   file = Path(__file__).resolve()
-   parent, top = file.parent, file.parents[level]
-
-   sys.path.append(str(top))
-   try:
-      sys.path.remove(str(parent))
-   except ValueError:  # already removed
-      pass
-
-   __package__ = '.'.join(parent.parts[len(top.parts):])
-   importlib.import_module(__package__)  # won't be needed after that
-
-
-if __name__ == '__main__' and __package__ is None or __package__ == '':
-   import_parents(level=2)
-   from ..lib.gui import gui
-   from ..lib.gui.events import EventHandlerPool
-   from ..lib.gui.event_handlers import *
-
+from events import EventHandlerPool
+from event_handlers import *
+import sys
+from vars import *
 
 e_pool = {}
 
@@ -106,7 +84,6 @@ def set_callbacks():
    e_pool["stc_settings_min_val"] += TextHandlers.point_set_min_val
    e_pool["stc_settings_max_val"] += TextHandlers.point_set_max_val
    e_pool["stc_settings_theme"] += ListBoxHandlers.set_theme
-
 
 def viewport():
    dpg.create_viewport(title='ConvexHull GUI',
