@@ -34,9 +34,9 @@ def create_gui(info: Parameters, default_viewport: bool = False):
       Returns:
           str: native path
       """
-      result = os.path.dirname(os.path.realpath(__file__))
+      result = os.getcwd()
       for i in str.split(path, "/"):
-         result = os.path.normpath(result, i)
+         result = os.path.normpath(os.path.join(result, i))
       return result
 
    if info.theme is not None:
@@ -45,6 +45,8 @@ def create_gui(info: Parameters, default_viewport: bool = False):
 
    if info.font is not None:
       info.font = to_native_path(info.font)
+      if info.debug:
+         print("DEBUG: font path is '", info.font, "'")
       with dpg.font_registry():
          # first argument ids the path to the .ttf or .otf file
          font = dpg.add_font(info.font, info.font_size)
