@@ -119,7 +119,7 @@ def fix_font(id: str | int):
 
 def main():
    theme = list(themes.values())[0]
-   font = [sys.path[0] + "/assets/Montserrat-Regular.otf", 25]
+   font = ["../assets/Montserrat-Regular.otf", 25]
 
    items = [window, viewport, set_callbacks]
    gui.create_gui(gui.Parameters(

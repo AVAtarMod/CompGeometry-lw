@@ -1,6 +1,8 @@
 import dearpygui.dearpygui as dpg
 from dataclasses import dataclass
 from typing import Callable
+import re
+import os
 
 
 @dataclass
@@ -23,11 +25,26 @@ class Parameters:
 def create_gui(info: Parameters, default_viewport: bool = False):
    dpg.create_context()
 
+   def to_native_path(path: str) -> str:
+      """Convert relative UNIX-style path to native path
+
+      Args:
+          path (str): relative UNIX-style path
+
+      Returns:
+          str: native path
+      """
+      result = os.path.dirname(os.path.realpath(__file__))
+      for i in str.split(path, "/"):
+         result = os.path.normpath(result, i)
+      return result
+
    if info.theme is not None:
       theme_id = info.theme()
       dpg.bind_theme(theme_id)
 
    if info.font is not None:
+      info.font = to_native_path(info.font)
       with dpg.font_registry():
          # first argument ids the path to the .ttf or .otf file
          font = dpg.add_font(info.font, info.font_size)
