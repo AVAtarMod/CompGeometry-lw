@@ -20,6 +20,7 @@ class Parameters:
    font_callback: Callable[[str | int], None] | None
    font_size: int = 12
    debug: bool = False
+   cwd: str = os.getcwd()
 
 
 def create_gui(info: Parameters, default_viewport: bool = False):
@@ -34,7 +35,7 @@ def create_gui(info: Parameters, default_viewport: bool = False):
       Returns:
           str: native path
       """
-      result = os.getcwd()
+      result = info.cwd
       for i in str.split(path, "/"):
          result = os.path.normpath(os.path.join(result, i))
       return result
@@ -46,7 +47,7 @@ def create_gui(info: Parameters, default_viewport: bool = False):
    if info.font is not None:
       info.font = to_native_path(info.font)
       if info.debug:
-         print("DEBUG: font path is '", info.font, "'")
+         print("DEBUG: font path is '", info.font, "'",sep='')
       with dpg.font_registry():
          # first argument ids the path to the .ttf or .otf file
          font = dpg.add_font(info.font, info.font_size)
