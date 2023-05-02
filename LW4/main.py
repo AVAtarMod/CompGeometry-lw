@@ -1,14 +1,34 @@
 import lib_cppgeometry_wrapper as l
 import dearpygui_ext.themes as dpg_ext
 import dearpygui.dearpygui as dpg
-import gui
 from typing import Callable
-from events import EventHandlerPool
-from event_handlers import *
 import sys
 from vars import *
+from pathlib import Path
+import importlib
+from event_handlers import *
 
 e_pool = {}
+
+def import_parents(level=1):
+   global __package__
+   file = Path(__file__).resolve()
+   parent, top = file.parent, file.parents[level]
+
+   sys.path.append(str(top))
+   try:
+      sys.path.remove(str(parent))
+   except ValueError:  # already removed
+      pass
+
+   __package__ = '.'.join(parent.parts[len(top.parts):])
+   importlib.import_module(__package__)  # won't be needed after that
+
+
+if __name__ == '__main__' and __package__ is None or __package__ == '':
+   import_parents(level=2)
+   from ..lib.gui import gui
+   from ..lib.gui.events import EventHandlerPool
 
 
 def window():
@@ -30,11 +50,6 @@ def window():
       with dpg.menu(label="Настройки"):
          with dpg.group(horizontal=True):
             dpg.add_text(default_value="Количество точек: ")
-
-            input_point_amount = dpg.add_input_int(
-                width=120, default_value=plot_number_amount)
-            dpg.add_text(
-                default_value=f"(по умолчанию: {plot_number_amount})")
          with dpg.group(horizontal=True):
             dpg.add_text(default_value="Метод построения: ")
             input_method = dpg.add_listbox(items=list(method_map.keys()))
@@ -60,7 +75,6 @@ def set_callbacks():
    # Static UI objects pools
    e_pool["virt_w_text"] = EventHandlerPool(text, False)
    e_pool["stc_btn_point_gen"] = EventHandlerPool(button_bar_gen)
-   e_pool["stc_settings_point_amount"] = EventHandlerPool(input_point_amount)
    e_pool["stc_settings_method"] = EventHandlerPool(input_method)
    e_pool["stc_settings_min_val"] = EventHandlerPool(input_min_val)
    e_pool["stc_settings_max_val"] = EventHandlerPool(input_max_val)
@@ -78,7 +92,6 @@ def set_callbacks():
 
    e_pool["stc_btn_point_gen"] += ButtonHandlers.generate_point(
        plot, e_pool["dyn_point"], [button_make_hull])
-   e_pool["stc_settings_point_amount"] += TextHandlers.set_plot_number_amount
    e_pool["stc_settings_method"] += ListBoxHandlers.set_current_method
    e_pool["stc_btn_make_hull"] += ButtonHandlers.make_hull_by_points
    e_pool["stc_settings_min_val"] += TextHandlers.point_set_min_val
