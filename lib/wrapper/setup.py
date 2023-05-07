@@ -136,7 +136,7 @@ class CMakeBuild(build_ext):
 # logic and declaration, and simpler if you include description/version in a file.
 setup(
     name="lib_cppgeometry_wrapper",
-    version="1.0",
+    version="1.1",
     description="lib_cppgeometry wrapper using pybind11 and CMake",
     long_description="",
     ext_modules=[CMakeExtension("lib_cppgeometry_wrapper")],

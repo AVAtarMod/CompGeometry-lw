@@ -25,15 +25,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_DEFAULT_INCLUDE_PATH})
 target_link_libraries(${PROJECT_NAME} PRIVATE shared)
 
 if ("$ENV{lib_cppgeometry_wrapper_PIP_SETUP}" STREQUAL "")
-
 add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
-    COMMAND pip install dearpygui pybind11 dearpygui_ext
+    COMMAND pip install -r requirements.txt
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMENT "Installing python external modules..."
+    COMMENT "Installing wrapper dependencies..."
 )
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND pip install --force-reinstall .
+    COMMAND pip install --no-build-isolation --force-reinstall .
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMENT "Installing wrapper with pip..."
+    COMMENT "Building and installing wrapper with pip..."
 )
 endif()

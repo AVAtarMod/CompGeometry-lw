@@ -1,0 +1,4 @@
+wheel
+setuptools>=42
+ninja
+cmake>=3.12
