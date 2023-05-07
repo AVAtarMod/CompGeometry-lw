@@ -46,11 +46,17 @@ PYBIND11_MODULE(lib_cppgeometry_wrapper, m)
           py::overload_cast<const char*>(&Point::operator[], py::const_))
      .def("__setitem__", py::overload_cast<const char*>(&Point::operator[]))
      .def("__str__", &Point::to_string)
-     .def("__eq__",&Point::operator==);
+     .def("__eq__", &Point::operator==);
+
+   py::class_<LineSegment>(m, "LineSegment")
+     .def(py::init<const Point&, const Point&>())
+     .def(py::init<const Line&, const Point*>());
+
 
    py::class_<Polygon>(m, "Polygon")
      .def(py::init<const std::vector<Point>&>(), "Construct N-point Polygon")
      .def("convexHull", &getConvexHull)
+     .def("segmentInsidePolygon", &Polygon::segmentInsidePolygon)
      .def("size", &Polygon::size)
      .def("__len__", &Polygon::size)
      .def("get", &Polygon::get)
@@ -61,5 +67,10 @@ PYBIND11_MODULE(lib_cppgeometry_wrapper, m)
      .value("JARVIS", ConvexHullMethod::JARVIS)
      .export_values();
 
+   py::enum_<ClipSegmentMethod>(m, "ClipSegmentMethod")
+     .value("COHEN_SUTHERLAND", ClipSegmentMethod::COHEN_SUTHERLAND)
+     .value("SPROULE_SUTHERLAND", ClipSegmentMethod::SPROULE_SUTHERLAND)
+     .value("CYRUS_BECK", ClipSegmentMethod::CYRUS_BECK)
+     .export_values();
    py::bind_vector<std::vector<Point>>(m, "VectorPoint");
 }
