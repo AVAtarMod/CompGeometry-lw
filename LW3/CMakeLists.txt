@@ -16,12 +16,13 @@ set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ version selection")  # or 11, 14, 17
 set(CMAKE_CXX_STANDARD_REQUIRED ON)  # optional, ensure standard is supported
 set(CMAKE_CXX_EXTENSIONS OFF)  # optional, keep compiler extensions off
 
-file(GLOB library_sources ${CMAKE_DEFAULT_INCLUDE_PATH}/lib_cppgeometry/*.cpp)
-file(GLOB wrapper_sources module/wrapper.cpp)
-
-find_package(Python3 COMPONENTS Interpreter Development)
-add_subdirectory(${CMAKE_DEFAULT_INCLUDE_PATH}/pybind11 pybind11_build)
 add_subdirectory("${LWLib}/wrapper" wrapper)
+add_custom_command(OUTPUT python_dependencies
+    COMMAND pip install  -r requirements.txt
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    COMMENT "Installing ${PROJECT_NAME} python dependencies..."
+)
+add_custom_target(${PROJECT_NAME} ALL DEPENDS python_dependencies lib_cppgeometry_wrapper)
 
 # create the executable
 add_executable(main ${LWLib}/wrapper/main.cpp)

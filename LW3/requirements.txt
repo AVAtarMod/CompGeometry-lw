@@ -1,0 +1,3 @@
+dearpygui
+pybind11
+dearpygui_ext
