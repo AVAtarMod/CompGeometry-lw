@@ -18,9 +18,15 @@ set(CMAKE_CXX_EXTENSIONS OFF)  # optional, keep compiler extensions off
 
 file(GLOB library_sources ${CMAKE_DEFAULT_INCLUDE_PATH}/lib_cppgeometry/*.cpp)
 
-find_package(Python3 COMPONENTS Interpreter Development)
-add_subdirectory(${CMAKE_DEFAULT_INCLUDE_PATH}/pybind11 pybind11_build)
 add_subdirectory("${LWLib}/wrapper" wrapper)
+
+add_custom_command(OUTPUT python_dependencies
+    COMMAND pip install  -r requirements.txt
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    COMMENT "${PROJECT_NAME} Installing python dependencies..."
+)
+add_custom_target(${PROJECT_NAME} ALL DEPENDS python_dependencies lib_cppgeometry_wrapper)
+
 
 # create the executable
 add_executable(main ${LWLib}/wrapper/main.cpp)
