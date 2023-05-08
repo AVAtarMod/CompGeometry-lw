@@ -43,15 +43,22 @@ PYBIND11_MODULE(lib_cppgeometry_wrapper, m)
      .def("dimension", &Point::size)
      .def("getRandom", &Point::getRandom)
      .def("__getitem__",
-          py::overload_cast<const char*>(&Point::operator[], py::const_))
-     .def("__setitem__", py::overload_cast<const char*>(&Point::operator[]))
+          py::overload_cast<const std::string&>(&Point::operator[], py::const_))
+     .def("__setitem__", py::overload_cast<const std::string&>(&Point::operator[]))
+     .def("getIndex",
+          py::overload_cast<size_t>(&Point::operator[], py::const_))
+     .def("setIndex", py::overload_cast<size_t>(&Point::operator[]))
+     .def("getName",
+          py::overload_cast<const std::string&>(&Point::operator[], py::const_))
+     .def("setName", py::overload_cast<const std::string&>(&Point::operator[]))
      .def("__str__", &Point::to_string)
      .def("__eq__", &Point::operator==);
 
    py::class_<LineSegment>(m, "LineSegment")
      .def(py::init<const Point&, const Point&>())
-     .def(py::init<const Line&, const Point*>());
-
+     .def(py::init<const Line&, const Point*>())
+     .def("getBegin", &LineSegment::getBegin)
+     .def("getEnd", &LineSegment::getEnd);
 
    py::class_<Polygon>(m, "Polygon")
      .def(py::init<const std::vector<Point>&>(), "Construct N-point Polygon")
