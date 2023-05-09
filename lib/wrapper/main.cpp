@@ -16,6 +16,9 @@ int main(int argc, char const* argv[])
                                Point(18.77, 15.82),
                                Point(1.88, 21.39) };
    auto i = Polygon::convexHull(test, ConvexHullMethod::JARVIS);
-   Point a = i[0];
+   Polygon hull(i);
+   auto ptr = hull.segmentInsidePolygon(LineSegment({ 0, 0 }, { 2, 0 }),
+                                        ClipSegmentMethod::COHEN_SUTHERLAND);
+   int a = 0;
    return 0;
 }

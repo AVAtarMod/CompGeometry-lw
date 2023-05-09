@@ -4,6 +4,10 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
 
+#ifndef NDEBUG
+#define PYBIND11_DETAILED_ERROR_MESSAGES
+#endif // NDEBUG
+
 namespace py = pybind11;
 
 std::vector<Point> getConvexHull(const std::vector<Point>& points,
@@ -44,13 +48,15 @@ PYBIND11_MODULE(lib_cppgeometry_wrapper, m)
      .def("getRandom", &Point::getRandom)
      .def("__getitem__",
           py::overload_cast<const std::string&>(&Point::operator[], py::const_))
-     .def("__setitem__", py::overload_cast<const std::string&>(&Point::operator[]))
-     .def("getIndex",
-          py::overload_cast<size_t>(&Point::operator[], py::const_))
-     .def("setIndex", py::overload_cast<size_t>(&Point::operator[]))
+     .def("getIndex", py::overload_cast<size_t>(&Point::operator[], py::const_))
+     .def("setIndex",
+          [](Point& self, size_t index, double value) { self[index] = value; })
      .def("getName",
           py::overload_cast<const std::string&>(&Point::operator[], py::const_))
-     .def("setName", py::overload_cast<const std::string&>(&Point::operator[]))
+     .def("setName",
+          [](Point& self, const std::string& name, double value) {
+             self[name] = value;
+          })
      .def("__str__", &Point::to_string)
      .def("__eq__", &Point::operator==);
 
