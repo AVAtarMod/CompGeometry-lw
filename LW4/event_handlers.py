@@ -234,7 +234,6 @@ class PointHandlers:
    def update_frame(plot_id: int | str, frame_point_callback):
       """Update lines of frame by point movement
       """
-      # TODO Fix square frame case
       def __update_func(sender: int | str, user_data, app_data=None):
          global _plot_frame_series_id, _axis_Oy_id
          dpg_init_oY_axis(plot_id)
@@ -247,7 +246,7 @@ class PointHandlers:
             _plot_frame[label].id = sender
             _plot_frame[label].point = l.Point(new_x, new_y)
             if plot_number_amount == 4:
-               correct_square_frame(_plot_frame)
+               correct_square_frame(_plot_frame, label)
             generate_frame_box(_plot_frame, plot_id,
                                frame_point_callback, sender)
          else:
@@ -290,7 +289,7 @@ def generate_square_frame(round_func, point_size: int):
       if abs(p1['y'] - p2['y']) > 1:
          points = [p1, p2]
          break
-   if points[0]['y'] > points[1]['y']:
+   if points[0]['y'] > points[1]['y'] or points[0]['x'] > points[1]['x']:
       points.reverse()
    points.insert(1, l.Point(points[1]['x'], points[0]['y']))
    points.append(l.Point(points[0]['x'], points[2]['y']))
@@ -379,32 +378,22 @@ def get_unique_point(_round_func: Callable[[l.Point], l.Point], _point_size: int
    return p
 
 
-def correct_square_frame(plot_frame: dict[str, PlotPoint]) -> None:
+def correct_square_frame(plot_frame: dict[str, PlotPoint], label: str) -> None:
    length = len(plot_frame)
    l = [i.point for i in list(plot_frame.values())]
-   correctDone = False
-   for i in range(length):
-      begin = i
-      midlle = (i + 1) % length
-      end = (midlle + 1) % length
-      correct_triplet = l[midlle]['x'] == l[end]['x'] and \
-          l[midlle]['y'] == l[begin]['y']
-      if correct_triplet:
-         # Use existed variable to optimize memory usage
-         correctDone = True
-         i = (end+1) % length
-         begin_index = (i + 1) % 2
-         end_index = i % 2
-         l[begin].setIndex(begin_index, l[i].getIndex(begin_index))
-         l[end].setIndex(end_index, l[i].getIndex(end_index))
-         break
-   if not correctDone and debug:
-      print("DEBUG: square frame not corrected!")
+   i = list(plot_frame.keys()).index(label)
+
+   begin = (i + 1) % length
+   end = (i - 1) % length
+   # 0 = 'x', 1 = 'y'
+   begin_coord = (i + 1) % 2
+   end_coord = i % 2
+   l[begin].setIndex(begin_coord, l[i].getIndex(begin_coord))
+   l[end].setIndex(end_coord, l[i].getIndex(end_coord))
+
    for i, key in enumerate(plot_frame):
       plot_frame[key].point = l[i]
 
-def almost_equal(left: float,right: float, precision: float = 0.01):
-   return abs(left-right) < precision
 
 def generate_color():
    return random.choices(range(256), k=3)
