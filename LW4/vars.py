@@ -1,19 +1,16 @@
-# This file contain global vars
+# This file contain global variables
 import lib_cppgeometry_wrapper as l
 import dearpygui_ext.themes as dpg_ext
 
+debug = True
 
-method_map_keys = [
-    "Алгоритм Сазерленда-Коэна", "Алгоритм Спрулла-Сазерленда",
-    "Алгоритм Кируса-Бека"
-    ]
-method_map = {method_map_keys[0]: l.ConvexHullMethod.JARVIS,
-              method_map_keys[1]: l.ConvexHullMethod.GRAHAM, }
 
+method_map = {"Алгоритм Сазерленда-Коэна": l.ClipSegmentMethod.COHEN_SUTHERLAND,
+              "Алгоритм Спрулла-Сазерленда": l.ClipSegmentMethod.SPROULE_SUTHERLAND,
+              "Алгоритм Кируса-Бека": l.ClipSegmentMethod.CYRUS_BECK}
 # Default value
-current_method = method_map_keys[0]
-
-plot_number_amount = 2
+current_method = "Алгоритм Сазерленда-Коэна"
+plot_number_amount = 4
 point_min_val = 0
 point_max_val = 10
 
