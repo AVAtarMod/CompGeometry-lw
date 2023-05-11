@@ -93,9 +93,8 @@ class TextHandlers:
          dpg.set_value(sender, point_max_val)
 
    @staticmethod
-   def notify_segment_empty(data: dict[str, PlotPoint]):
-      vals = list(data.values())
-      msg = f"Линия {str(vals[0].point)} -> {str(vals[1].point)} вне границ области отрисовки."
+   def notify_segment_empty(data: list[l.Point]):
+      msg = f"Линия {str(data[0])} -> {str(data[1])} вне границ области отрисовки."
       if debug:
          print("DEBUG:", msg)
       return msg
@@ -103,29 +102,20 @@ class TextHandlers:
 
 class ButtonHandlers:
    @staticmethod
-   def clip_line(error_callback, plot_id: int | str):
+   def clip_line(error_callback: Callable[[list[l.Point]], None], plot_id: int | str):
       def __update_func(sender: int | str, _0=None, _1=None):
          global _plot_clip_series, _plot_clip_points, _axis_Oy_id, _plot_clip_points, _plot_frame
-         raw_segment_dict = _plot_clip_points['raw']
-         raw_points = [i.point for i in list(raw_segment_dict.values())]
+         raw_points = [i.point for i in list(_plot_clip_points['raw'].values())]
          points = [i.point for i in list(_plot_frame.values())]
          polygon = l.Polygon(l.VectorPoint(
              points))
          raw_segment = l.LineSegment(raw_points[0], raw_points[1])
          out_segment = polygon.segmentInsidePolygon(
              raw_segment, method_map[current_method])
-         _plot_clip_points['out'] = _plot_clip_val
 
-         dpg_try_delete_item(_plot_clip_series['raw'])
-         _plot_clip_series['raw'] = 0
-         dpg_try_delete_item(_plot_clip_series['out'])
+         ui_clear_box(_plot_clip_points['out'], _plot_clip_series['out'])
          _plot_clip_series['out'] = 0
 
-         raw_x, raw_y = get_series_from_list(raw_points)
-         _plot_clip_series['raw'] = dpg.add_line_series(  # type: ignore
-             raw_x, raw_y,
-             label='Исходная линия', parent=_axis_Oy_id)
-         del raw_x, raw_y
          if out_segment is not None:
             out_points = [out_segment.getBegin(), out_segment.getEnd()]
             label_begin = clip_point_suffix + 'begin'
@@ -134,17 +124,17 @@ class ButtonHandlers:
                 out_points[0]['x'], out_points[0]['y']), label='Clip begin',
                 parent=plot_id, color=generate_color(), user_data=label_begin)
             out_end = dpg.add_drag_point(default_value=(
-                out_points[0]['x'], out_points[0]['y']), label='Clip end',
+                out_points[1]['x'], out_points[1]['y']), label='Clip end',
                 parent=plot_id, color=generate_color(), user_data=label_end)
-            out_begin, out_end = int(out_begin), int(out_end)
-            _plot_clip_points['out'] = {label_begin: PlotPoint(out_begin, out_points[0]),
-                                        label_end: PlotPoint(out_end, out_points[1])}
+
+            _plot_clip_points['out'] = {label_begin: PlotPoint(int(out_begin), out_points[0]),
+                                        label_end: PlotPoint(int(out_end), out_points[1])}
             out_x, out_y = get_series_from_list(
                 plot_objects_to_list(_plot_clip_points['out']))
             _plot_clip_series['out'] = (dpg.add_line_series(out_x, out_y,  # type: ignore
                                                             label='Обрезанная линия', parent=_axis_Oy_id))
          else:
-            error_callback(raw_segment_dict)
+            error_callback(raw_points)
       return __update_func
 
    @staticmethod
@@ -155,7 +145,7 @@ class ButtonHandlers:
       def __update_func(sender: int | str, _0=None, _1=None):
          global _plot_frame_series_id, _plot_frame
          global point_min_val, point_max_val
-         ui_clear_frame_box(_plot_frame, _plot_frame_series_id, null_tag)
+         ui_clear_box(_plot_frame, _plot_frame_series_id, null_tag)
          _plot_frame_series_id = 0
          _plot_frame.clear()
          _points = []
@@ -311,7 +301,7 @@ def generate_label(points: dict[str, PlotPoint]):
    raise RuntimeError("Cannot generate label: maximum values exceeded")
 
 
-def ui_clear_frame_box(_plot_frame: dict[str, PlotPoint], series_id: int | str, exclude: int | str):
+def ui_clear_box(_plot_frame: dict[str, PlotPoint], series_id: int | str, exclude: int | str = null_tag):
    for i in list(_plot_frame.values()):
       if exclude != null_tag and i.id == exclude:
          continue
@@ -325,7 +315,7 @@ def generate_frame_box(_plot_frame: dict[str, PlotPoint], plot_id: int | str, fr
    id = _plot_frame_series_id
    _points = plot_objects_to_list(_plot_frame)
    x, y = get_series_from_list(_points)
-   ui_clear_frame_box(_plot_frame, id, exclude)
+   ui_clear_box(_plot_frame, id, exclude)
    for label in _plot_frame:
       dpg_set_point(_plot_frame, _plot_frame[label].id, label)
       if _plot_frame[label].id == exclude:

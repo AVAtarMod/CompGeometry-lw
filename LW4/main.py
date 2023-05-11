@@ -36,6 +36,7 @@ def import_parents(level=1):
 
 if __name__ == '__main__' and __package__ is None or __package__ == '':
    import_parents(level=2)
+   from ..lib.gui import themes as t
    from ..lib.gui import gui
    from ..lib.gui.events import EventHandlerPool
 
@@ -101,7 +102,7 @@ def set_callbacks():
    if debug:
       dyn_pool["frame_point"] += bind_pool["w_text"].get_bind_handler(
           0, PointHandlers.process_to_text, use_sender=True)
-      # dyn_pool["frame_point"] += PointHandlers.print_points()
+      dyn_pool["frame_point"] += PointHandlers.print_points()
 
    s_pool["settings_point_amount"] += TextHandlers.set_plot_number_amount(
        listbox_id)
@@ -113,8 +114,10 @@ def set_callbacks():
    s_pool["btn_point_gen"] += ButtonHandlers.generate_clip_line(plot)
    s_pool["btn_point_gen"] += ButtonHandlers.enable_items([button_clip])
    s_pool["settings_method"] += ListBoxHandlers.set_current_method
+   notify_text = bind_pool["w_text"].bind_set_procedure(
+       TextHandlers.notify_segment_empty)
    s_pool["btn_clip"] += ButtonHandlers.clip_line(
-       TextHandlers.notify_segment_empty, plot)
+       notify_text, plot)
    s_pool["settings_min_val"] += TextHandlers.point_set_min_val
    s_pool["settings_max_val"] += TextHandlers.point_set_max_val
    s_pool["settings_theme"] += ListBoxHandlers.set_theme
@@ -130,7 +133,8 @@ def fix_font(id: str | int):
 
 
 def main():
-   theme = list(themes.values())[0]
+   themes["Светлая"] = t.create_theme_white_default
+   theme = list(themes.values())[1]
    font = ["../assets/Montserrat-Regular.otf", 25]
 
    items = [window, viewport, set_callbacks]
