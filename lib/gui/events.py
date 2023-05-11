@@ -53,12 +53,12 @@ class EventHandlerPool:
 
       Args:
          external_item_id (str | int): source of data
-         procedure (Callable[[object, object], None]): function to process value from `external_item_id`.
-         Must accept 
+         procedure (Callable[[object, object], None]): function to process value from `external_item_id` or `sender`.
+         Must accept
          - current value of `self` item as first parameter,
          - current value of `external_item_id` as second parameter
 
-         use_sender (bool): use sender value in resulted handler instead of `external_item_id`
+         use_sender (bool): use `sender` in resulted handler instead of `external_item_id`
 
       Returns:
          event handler. May be appended to EventHandlerPool for `external_item_id`
@@ -79,4 +79,25 @@ class EventHandlerPool:
                 sender) if use_sender else dpg.get_value(external_item_id)
             out = procedure(val, ext_val)
             dpg.set_value(self.item_id, out)
+      return __update
+
+   def bind_set_procedure(self, procedure: Callable | None = None):
+      """Get handler that change value item of this EventHandlerPool by external data
+
+      Args:
+         external_item_id (str | int): source of data
+         procedure (Callable[[*object], object]): function to process external data.
+         Must accept
+         - `*args` as first parameter
+
+         Must return value, that will be set to item of this EventHandlerPool
+
+      Returns:
+         Procedure which accept `*args` and pass it to `procedure`, then set return value of `procedure` to this item. Cannot be appended to EventHandlerPool, use this in other procedures
+      """
+      def __update(*args):
+         """Generated handler
+         """
+         value = procedure(*args)
+         dpg.set_value(self.item_id, value)
       return __update
