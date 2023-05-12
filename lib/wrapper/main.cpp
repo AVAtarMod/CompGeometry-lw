@@ -67,15 +67,15 @@ void test3()
 }
 void test4()
 {
-   std::vector<Point> test = { Point(4.17429, 4.70855),
-                               Point(5.37042, 4.70855),
-                               Point(5.37042, 8.18),
-                               Point(4.17429, 8.18) };
+   std::vector<Point> test = { Point(2.53954, 10.0967),
+                               Point(7.75622, 10.0967),
+                               Point(7.75622, 14.921),
+                               Point(2.53954, 14.921) };
    auto i = Polygon(test);
    /** out is
       nullptr (segment outside area)
     */
-   auto segment = LineSegment(Point(9.23, 0.39), Point(5.13, 4.24));
+   auto segment = LineSegment(Point(8.31, 2.96), Point(4.91, 8.77));
    auto ptr1 =
      i.segmentInsidePolygon(segment, ClipSegmentMethod::SPROULE_SUTHERLAND);
 
