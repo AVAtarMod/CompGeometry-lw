@@ -156,8 +156,6 @@ class ButtonHandlers:
             for _ in range(plot_number_amount):
                p = get_unique_point(_round_func, _point_size, _points)
                _points.append(p)
-            _points = l.Polygon.convexHull(
-                l.VectorPoint(_points), l.ConvexHullMethod.GRAHAM)
          for p in _points:
             label = generate_label(_plot_frame)
             _plot_frame[label] = PlotPoint(0, p)
