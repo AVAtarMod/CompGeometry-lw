@@ -6,37 +6,66 @@ void test2();
 void test3();
 void test4();
 void test5();
+
+bool almost_equal(std::unique_ptr<LineSegment> source,
+                  std::unique_ptr<LineSegment> result, double precision);
+
 int main(int argc, char const* argv[])
 {
    test1();
-   // test2();
-   // test3();
+   test2();
+   test3();
    test4();
-   // test5();
+   test5();
    return 0;
 }
 
 void test1()
 {
-   std::vector<Point> test = { Point(3.51208, 4.03),
-                               Point(5.42009, 4.03),
-                               Point(5.42009, 9.15576),
-                               Point(3.51208, 9.15576) };
+   std::vector<Point> test = { Point(4.52659, 5.66419),
+                               Point(5.62353, 5.66419),
+                               Point(5.62353, 9.77856),
+                               Point(4.52659, 9.77856) };
    auto i = Polygon(test);
-   auto ptr =
-     i.segmentInsidePolygon(LineSegment(Point(8.84, 8.35), Point(6.47, 7.52)),
-                            ClipSegmentMethod::COHEN_SUTHERLAND);
+   LineSegment segment(Point(4.79, 5.84), Point(9.85, 3.67));
+   auto ptr1 =
+     i.segmentInsidePolygon(segment, ClipSegmentMethod::COHEN_SUTHERLAND);
+   auto ptr2 =
+     i.segmentInsidePolygon(segment, ClipSegmentMethod::SPROULE_SUTHERLAND);
+
+   auto ptr3 = i.segmentInsidePolygon(segment, ClipSegmentMethod::CYRUS_BECK);
+   /** type: out
+            (4.79, 5.84)
+            (5.2, 5.66417)
+    */
+   double precision = 0.5;
+   auto input = std::make_unique<LineSegment>(segment);
+   bool method1 = almost_equal(std::move(input), std::move(ptr1), precision),
+        method2 = almost_equal(std::move(input), std::move(ptr2), precision),
+        method3 = almost_equal(std::move(input), std::move(ptr3), precision);
+   std::string str = "";
+   if (!method1)
+      str += "COHEN_SUTHERLAND ";
+   if (!method2)
+      str += "SPROULE_SUTHERLAND ";
+   if (!method3)
+      str += "CYRUS_BECK ";
+   if (!method1 || !method2 || !method3) {
+      throw std::runtime_error("test 3 error: " + str + "failed.");
+   } else {
+      std::cout << "test 3 success\n";
+   }
 }
 
 void test2()
 {
-   std::vector<Point> test = { Point(2.36, 9.36613),
-                               Point(7.88037, 9.36613),
-                               Point(7.88037, 3.43),
-                               Point(2.36, 3.43) };
+   std::vector<Point> test = { Point(8.28809, 2.9038),
+                               Point(7.05812, 2.9038),
+                               Point(7.05812, 9.74),
+                               Point(8.28809, 9.74) };
    auto i = Polygon(test);
    auto ptr =
-     i.segmentInsidePolygon(LineSegment(Point(4.69, 8.62), Point(5.98, 2.38)),
+     i.segmentInsidePolygon(LineSegment(Point(8.64, 8.92), Point(6, 3.5)),
                             ClipSegmentMethod::COHEN_SUTHERLAND);
 }
 void test3()
@@ -77,10 +106,10 @@ void test4()
     */
    auto segment = LineSegment(Point(8.31, 2.96), Point(4.91, 8.77));
    auto ptr1 =
-     i.segmentInsidePolygon(segment, ClipSegmentMethod::SPROULE_SUTHERLAND);
+     i.segmentInsidePolygon(segment, ClipSegmentMethod::COHEN_SUTHERLAND);
 
    auto ptr2 =
-     i.segmentInsidePolygon(segment, ClipSegmentMethod::COHEN_SUTHERLAND);
+     i.segmentInsidePolygon(segment, ClipSegmentMethod::SPROULE_SUTHERLAND);
 
    auto ptr3 = i.segmentInsidePolygon(segment, ClipSegmentMethod::CYRUS_BECK);
    if (ptr1 != nullptr || ptr2 != nullptr || ptr3 != nullptr) {
@@ -106,15 +135,24 @@ void test5()
    auto ptr =
      i.segmentInsidePolygon(segment, ClipSegmentMethod::SPROULE_SUTHERLAND);
    double precision = 0.5;
-   bool correctOut =
-     ptr != nullptr &&
-     areEqual(ptr->getBegin()["x"], segment.getBegin()["x"], precision) &&
-     areEqual(ptr->getBegin()["y"], segment.getBegin()["y"], precision) &&
-     areEqual(ptr->getEnd()["x"], segment.getEnd()["x"], precision) &&
-     areEqual(ptr->getEnd()["y"], segment.getEnd()["x"], precision);
-   if (!correctOut) {
+   if (!almost_equal(
+         std::make_unique<LineSegment>(segment), std::move(ptr), precision)) {
       throw std::runtime_error("test 3 error");
    } else {
       std::cout << "test 3 success\n";
    }
+}
+
+bool almost_equal(std::unique_ptr<LineSegment> source,
+                  std::unique_ptr<LineSegment> result, double precision)
+{
+   bool pre = (result == nullptr && source == nullptr);
+   return pre ||
+          (result != nullptr && source != nullptr &&
+           areEqual(
+             source->getBegin()["x"], result->getBegin()["x"], precision) &&
+           areEqual(
+             source->getBegin()["y"], result->getBegin()["y"], precision) &&
+           areEqual(source->getEnd()["x"], result->getEnd()["x"], precision) &&
+           areEqual(source->getEnd()["y"], result->getEnd()["x"], precision));
 }
