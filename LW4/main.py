@@ -115,7 +115,7 @@ def set_callbacks():
    s_pool["btn_point_gen"] += ButtonHandlers.enable_items([button_clip])
    s_pool["settings_method"] += ListBoxHandlers.set_current_method
    notify_text = bind_pool["w_text"].bind_set_procedure(
-       TextHandlers.notify_segment_empty)
+       TextHandlers.notify)
    s_pool["btn_clip"] += ButtonHandlers.clip_line(
        notify_text, plot)
    s_pool["settings_min_val"] += TextHandlers.point_set_min_val

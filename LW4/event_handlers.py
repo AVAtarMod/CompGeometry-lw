@@ -93,8 +93,7 @@ class TextHandlers:
          dpg.set_value(sender, point_max_val)
 
    @staticmethod
-   def notify_segment_empty(data: list[l.Point]):
-      msg = f"Линия {str(data[0])} -> {str(data[1])} вне границ области отрисовки."
+   def notify(msg: str):
       if debug:
          print("DEBUG:", msg)
       return msg
@@ -102,7 +101,7 @@ class TextHandlers:
 
 class ButtonHandlers:
    @staticmethod
-   def clip_line(error_callback: Callable[[list[l.Point]], None], plot_id: int | str):
+   def clip_line(notify_procedure: Callable[[str], None], plot_id: int | str):
       def __update_func(sender: int | str, _0=None, _1=None):
          global _plot_clip_series, _plot_clip_points, _axis_Oy_id, _plot_clip_points, _plot_frame
          raw_points = [i.point for i in list(_plot_clip_points['raw'].values())]
@@ -133,8 +132,10 @@ class ButtonHandlers:
                 plot_objects_to_list(_plot_clip_points['out']))
             _plot_clip_series['out'] = (dpg.add_line_series(out_x, out_y,  # type: ignore
                                                             label='Обрезанная линия', parent=_axis_Oy_id))
+            notify_procedure("Отрезок успешно обрезан")
          else:
-            error_callback(raw_points)
+            msg = f"Линия {str(raw_points[0])} -> {str(raw_points[1])} вне границ области отрисовки."
+            notify_procedure(msg)
       return __update_func
 
    @staticmethod
