@@ -6,8 +6,10 @@ from typing import Callable
 import dataclasses
 from dataclasses import dataclass
 
-_get_label_labels = "ABCDEFGHIJKLMPRSTUFXYZ"
-_max_points = len(_get_label_labels)*10
+# TODO: round point coordinates to 2 digits (need use dpg.set_value)
+
+labels_alphabet = "ABCDEFGHIJKLMPRSTUFXYZ"
+_max_points = len(labels_alphabet)*10
 _axis_Oy_id = 0
 null_tag = "null_tag"
 default_plot_na = plot_number_amount
@@ -158,7 +160,7 @@ class ButtonHandlers:
                p = get_unique_point(_round_func, _point_size, _points)
                _points.append(p)
          for p in _points:
-            label = generate_label(_plot_frame)
+            label = allocate_plot_object(_plot_frame)
             _plot_frame[label] = PlotPoint(0, p)
          generate_frame_box(_plot_frame, plot_id, frame_point_callback)
 
@@ -179,7 +181,7 @@ class ButtonHandlers:
       def __update_func(sender: int | str, _0=None, _1=None):
          global _axis_Oy_id, _plot_clip_series, _plot_clip_points
          global point_min_val, point_max_val
-         raw = _plot_clip_points['raw']
+         raw = {}
          for i in list(_plot_clip_points.values()):
             for point_data in list(i.values()):
                dpg_try_delete_item(point_data.id)
@@ -191,13 +193,14 @@ class ButtonHandlers:
             _plot_clip_series[label] = 0
 
          for _ in range(2):
-            label = generate_label(raw)
+            label = allocate_plot_object(raw)
             raw[label].point = get_unique_point(
                 _round_func, _point_size, plot_objects_to_list(raw))
             raw[label].id = dpg.add_drag_point(default_value=(
                 raw[label].point['x'], raw[label].point['y']), label=label, callback=PointHandlers.update_clip_lines(),
                 parent=plot_id, color=generate_color(), user_data=clip_point_suffix + label)
          x, y = get_series_from_list(plot_objects_to_list(raw))
+         _plot_clip_points['raw'] = raw
          _plot_clip_series['raw'] = dpg.add_line_series(x, y,  # type: ignore
                                                         label='Исходная линия', parent=_axis_Oy_id)
 
@@ -223,10 +226,10 @@ class PointHandlers:
    def update_frame(plot_id: int | str, frame_point_callback):
       """Update lines of frame by point movement
       """
-      def __update_func(sender: int | str, user_data, app_data=None):
+      def __update_func(sender: int | str, app_data, user_data=None):
          global _plot_frame_series_id, _axis_Oy_id
          dpg_init_oY_axis(plot_id)
-         label = dpg.get_item_configuration(sender)['user_data']
+         label = str(dpg.get_item_configuration(sender)['user_data'])
          # Value from point
          data = dpg.get_value(sender)
          new_x, new_y = data[0], data[1]
@@ -247,19 +250,26 @@ class PointHandlers:
    def update_clip_lines():
       """Update clip lines by point movement
       """
-      def __update_func(sender: int | str, user_data, _1=None):
+      def __update_func(sender: int | str, app_data, user_data=None):
          global _plot_clip_series, _plot_clip_points, _axis_Oy_id
-         label = user_data
-         # Value from point
-         data = dpg.get_value(sender)
-         new_x, new_y = data[0], data[1]
-         if label[0:2] == frame_point_suffix:
-            pass
-            # label = label[2:]
-            # _plot_frame[label] = l.Point(new_x, new_y)
-            # if plot_number_amount == 4:
-            #    correct_square_frame(_plot_frame)
-            # generate_frame_box(_plot_frame)
+         label = str(user_data)
+         real_label = label[2:]
+         if label[0:2] == clip_point_suffix:
+            ui_clear_box(_plot_clip_points['out'],
+                         _plot_clip_series['out'], sender)
+            for series in _plot_clip_series:
+               dpg_try_delete_item(_plot_clip_series[series])
+               _plot_clip_series[series] = 0
+            # Value from point
+            data = dpg.get_value(sender)
+            new_x, new_y = data[0], data[1]
+            changed = _plot_clip_points['raw'][real_label]
+            changed.point = l.Point(new_x, new_y)
+            changed.id = sender
+            new_x, new_y = get_series_from_list(
+                plot_objects_to_list(_plot_clip_points['raw']))
+            _plot_clip_series['raw'] = dpg.add_line_series(new_x, new_y,  # type: ignore
+                                                           label='Исходная линия', parent=_axis_Oy_id)
          else:
             raise RuntimeError(
                 "Cannot update frame if sender is non-frame point.")
@@ -285,13 +295,13 @@ def generate_square_frame(round_func, point_size: int):
    return points
 
 
-def generate_label(points: dict[str, PlotPoint]):
-   global _get_label_labels
+def allocate_plot_object(points: dict[str, PlotPoint]):
+   global labels_alphabet
    start = 0
    for suffix in map(str, range(start-1, 10)):
       if suffix == str(start-1):
          suffix = ""
-      for c in _get_label_labels:
+      for c in labels_alphabet:
          label = c + suffix
          if label in list(points.keys()):
             continue
