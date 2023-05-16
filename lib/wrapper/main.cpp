@@ -30,11 +30,11 @@ void test1()
    auto i = Polygon(test);
    LineSegment segment(Point(4.79, 5.84), Point(9.85, 3.67));
    auto ptr1 =
-     i.segmentInsidePolygon(segment, ClipSegmentMethod::COHEN_SUTHERLAND);
+     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::COHEN_SUTHERLAND);
    auto ptr2 =
-     i.segmentInsidePolygon(segment, ClipSegmentMethod::SPROULE_SUTHERLAND);
+     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
 
-   auto ptr3 = i.segmentInsidePolygon(segment, ClipSegmentMethod::CYRUS_BECK);
+   auto ptr3 = i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::CYRUS_BECK);
    /** type: out
             (4.79, 5.84)
             (5.2, 5.66417)
@@ -67,7 +67,7 @@ void test2()
    auto i = Polygon(test);
    auto ptr =
      i.segmentInsidePolygon(LineSegment(Point(3.91, 2.78), Point(7.17, 0.81)),
-                            ClipSegmentMethod::SPROULE_SUTHERLAND);
+                            Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
    /** out is
       (3.91, 2.78)
       (0.948644, 4.56953)
@@ -96,12 +96,12 @@ void test3()
     */
    auto segment = LineSegment(Point(8.31, 2.96), Point(4.91, 8.77));
    auto ptr1 =
-     i.segmentInsidePolygon(segment, ClipSegmentMethod::COHEN_SUTHERLAND);
+     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::COHEN_SUTHERLAND);
 
    auto ptr2 =
-     i.segmentInsidePolygon(segment, ClipSegmentMethod::SPROULE_SUTHERLAND);
+     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
 
-   auto ptr3 = i.segmentInsidePolygon(segment, ClipSegmentMethod::CYRUS_BECK);
+   auto ptr3 = i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::CYRUS_BECK);
    if (ptr1 != nullptr || ptr2 != nullptr || ptr3 != nullptr) {
       std::cerr << (
         "test " + testNum + " error (" +
@@ -125,7 +125,7 @@ void test4()
    // All segment must be inside polygon
    auto segment = LineSegment(Point(7.17, 8.79), Point(6.68, 8.71));
    auto ptr =
-     i.segmentInsidePolygon(segment, ClipSegmentMethod::SPROULE_SUTHERLAND);
+     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
    if (!almost_equal(&segment, ptr.get(), precision)) {
       std::cerr << ("test " + testNum + " failed\n");
    } else {
@@ -156,11 +156,11 @@ void test5()
    auto i = Polygon(test);
    LineSegment segment(Point(8.51, 6.84), Point(2.38, 7.88));
    auto ptr1 =
-     i.segmentInsidePolygon(segment, ClipSegmentMethod::COHEN_SUTHERLAND);
+     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::COHEN_SUTHERLAND);
    auto ptr2 =
-     i.segmentInsidePolygon(segment, ClipSegmentMethod::SPROULE_SUTHERLAND);
+     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
 
-   auto ptr3 = i.segmentInsidePolygon(segment, ClipSegmentMethod::CYRUS_BECK);
+   auto ptr3 = i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::CYRUS_BECK);
    /** type: out
             (8.51, 6.84)
             (7.87263, 6.94813)

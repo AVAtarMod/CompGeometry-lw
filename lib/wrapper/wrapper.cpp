@@ -11,7 +11,7 @@
 namespace py = pybind11;
 
 std::vector<Point> getConvexHull(const std::vector<Point>& points,
-                                 const ConvexHullMethod& m)
+                                 const Polygon::ConvexHullMethod& m)
 {
 
 #ifndef NDEBUG
@@ -75,15 +75,16 @@ PYBIND11_MODULE(lib_cppgeometry_wrapper, m)
      .def("get", &Polygon::get)
      .def("__setitem__", py::overload_cast<int>(&Polygon::operator[]));
 
-   py::enum_<ConvexHullMethod>(m, "ConvexHullMethod")
-     .value("GRAHAM", ConvexHullMethod::GRAHAM)
-     .value("JARVIS", ConvexHullMethod::JARVIS)
+   py::enum_<Polygon::ConvexHullMethod>(m, "ConvexHullMethod")
+     .value("GRAHAM", Polygon::ConvexHullMethod::GRAHAM)
+     .value("JARVIS", Polygon::ConvexHullMethod::JARVIS)
      .export_values();
 
-   py::enum_<ClipSegmentMethod>(m, "ClipSegmentMethod")
-     .value("COHEN_SUTHERLAND", ClipSegmentMethod::COHEN_SUTHERLAND)
-     .value("SPROULE_SUTHERLAND", ClipSegmentMethod::SPROULE_SUTHERLAND)
-     .value("CYRUS_BECK", ClipSegmentMethod::CYRUS_BECK)
+   py::enum_<Polygon::ClipSegmentMethod>(m, "ClipSegmentMethod")
+     .value("COHEN_SUTHERLAND", Polygon::ClipSegmentMethod::COHEN_SUTHERLAND)
+     .value("SPROULE_SUTHERLAND",
+            Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND)
+     .value("CYRUS_BECK", Polygon::ClipSegmentMethod::CYRUS_BECK)
      .export_values();
    py::bind_vector<std::vector<Point>>(m, "VectorPoint");
 }
