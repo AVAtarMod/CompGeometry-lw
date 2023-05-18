@@ -25,7 +25,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(main)
 
 # Copy resources to build dir
-if (EXISTS files)
+if (EXISTS ${PROJECT_SOURCE_DIR}/files)
    file(GLOB_RECURSE data files/*)
    foreach(file ${data})
       configure_file(${file} . COPYONLY)
