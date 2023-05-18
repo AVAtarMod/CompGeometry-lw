@@ -31,9 +31,9 @@ namespace t2 {
 
 void task2()
 {
-   const char* in_file1 = "1.txt";
+   const char* in_file1 = "task2_1in.txt";
    std::ifstream in(in_file1);
-   const char* in_file2 = "2.txt";
+   const char* in_file2 = "task2_2in.txt";
    std::ifstream in_mat(in_file2);
 
    if (!in) {
