@@ -12,10 +12,10 @@ std::tuple<std::vector<Point>, std::vector<Point>> read(std::ifstream& in)
    double x, y;
    in >> testsCount;
    std::tuple<std::vector<Point>, std::vector<Point>> out;
-   for (int i = 0; i < testsCount; i++) {
-      in >> x >> y;
-      out[i] = Point(x, y);
-   }
+   // for (int i = 0; i < testsCount; i++) {
+   //    in >> x >> y;
+   //    out[i] = Point(x, y);
+   // }
    return out;
 }
 
@@ -31,8 +31,8 @@ void task1_1()
       std::cerr << "File " << in_file << " not exist or not accessible\n";
    } else {
       auto data = read(in);
-      std::vector<Point>& polygon = data.first;
-      std::vector<Point>& input = data.second;
+      std::vector<Point>& polygon = std::get<0>(data);
+      std::vector<Point>& input = std::get<1>(data);
       std::cout << "Points in area: \n";
       for (auto&& i :
            Polygon(polygon).pointsInsidePolygon(input, Polygon::SIMPLE)) {
@@ -54,8 +54,8 @@ void task1_2()
       std::cerr << "File " << in_file << " not exist or not accessible\n";
    } else {
       auto data = read(in);
-      std::vector<Point>& polygon = data.first;
-      std::vector<Point>& input = data.second;
+      std::vector<Point>& polygon = std::get<0>(data);
+      std::vector<Point>& input = std::get<1>(data);
       std::cout << "Points in area: \n";
       for (auto&& i :
            Polygon(polygon).pointsInsidePolygon(input, Polygon::SIMPLE)) {
