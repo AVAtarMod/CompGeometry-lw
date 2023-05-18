@@ -1,62 +1,66 @@
 #include <fstream>
 #include <iostream>
+#include <tuple>
 #include <vector>
 
+#include "lib_cppgeometry/Polygon.hpp"
 #include "part1.hpp"
-#include "lib_cppgeometry/LineSegment.hpp"
-#include "lib_cppgeometry/Point.hpp"
 
-std::vector<Point> read(std::ifstream& in)
+std::tuple<std::vector<Point>, std::vector<Point>> read(std::ifstream& in)
 {
-    int testsCount;
-    double x, y;
-    in >> testsCount;
-    std::vector<Point> out(testsCount);
-    for (int i = 0; i < testsCount; i++)
-    {
-        in >> x >> y;
-        out[i] = Point(x, y);
-    }
-    return out;
+   int testsCount;
+   double x, y;
+   in >> testsCount;
+   std::tuple<std::vector<Point>, std::vector<Point>> out;
+   for (int i = 0; i < testsCount; i++) {
+      in >> x >> y;
+      out[i] = Point(x, y);
+   }
+   return out;
 }
 
-namespace t1_1
-{
+namespace t1_1 {
 }
 
 void task1_1()
 {
-    const char* in_file = "task1_1in.txt";
-    std::ifstream in(in_file);
+   const char* in_file = "task1_1in.txt";
+   std::ifstream in(in_file);
 
-    if (!in)
-    {
-        std::cerr << "File " << in_file << " not exist or not accessible\n";
-    }
-    else
-    {
-        std::vector<Point> points = read(in);
-      //   std::cout << t1_1::isLine(points) << std::endl;
-    }
-    in.close();
+   if (!in) {
+      std::cerr << "File " << in_file << " not exist or not accessible\n";
+   } else {
+      auto data = read(in);
+      std::vector<Point>& polygon = data.first;
+      std::vector<Point>& input = data.second;
+      std::cout << "Points in area: \n";
+      for (auto&& i :
+           Polygon(polygon).pointsInsidePolygon(input, Polygon::SIMPLE)) {
+         std::cout << "\t" << i << "\n";
+      }
+   }
+   in.close();
 }
 
-namespace t1_2
-{
+namespace t1_2 {
 }
 
 void task1_2()
 {
-    const char* in_file = "task1_2in.txt";
-    std::ifstream in(in_file);
+   const char* in_file = "task1_2in.txt";
+   std::ifstream in(in_file);
 
-    if (!in)
-    {
-        std::cerr << "File " << in_file << " not exist or not accessible\n";
-    }
-    else
-    {
-        std::vector<Point> points = read(in);
-    }
-    in.close();
+   if (!in) {
+      std::cerr << "File " << in_file << " not exist or not accessible\n";
+   } else {
+      auto data = read(in);
+      std::vector<Point>& polygon = data.first;
+      std::vector<Point>& input = data.second;
+      std::cout << "Points in area: \n";
+      for (auto&& i :
+           Polygon(polygon).pointsInsidePolygon(input, Polygon::SIMPLE)) {
+         std::cout << "\t" << i << "\n";
+      }
+   }
+   in.close();
 }

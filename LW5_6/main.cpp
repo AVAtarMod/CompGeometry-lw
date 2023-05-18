@@ -33,7 +33,7 @@ int main(int argc, char const* argv[])
           std::cout << "-----\n";
           break;
       case 3:
-         std::cout << "Task #5\n";
+         std::cout << "Task #3\n";
          task2();
          std::cout << "-----\n";
          break;
