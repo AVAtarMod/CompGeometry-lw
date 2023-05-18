@@ -22,7 +22,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # create the executable
-add_executable(main)
+add_executable(main part1.hpp part1.cpp part2.hpp part2.cpp)
 
 # Copy resources to build dir
 if (EXISTS files)
