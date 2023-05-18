@@ -25,11 +25,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(main main.cpp part1.hpp part1.cpp part2.hpp part2.cpp)
 
 # Copy resources to build dir
-if (EXISTS files)
+if (EXISTS ${PROJECT_SOURCE_DIR}/files)
    file(GLOB_RECURSE data files/*)
    foreach(file ${data})
       configure_file(${file} . COPYONLY)
    endforeach()
+else()
+   message(MESSAGE_WARNING "'files' directory not found")
 endif()
 
 add_subdirectory(${CMAKE_DEFAULT_INCLUDE_PATH}/lib_cppgeometry geometry_lib_bin)
