@@ -1,0 +1,17 @@
+0 #a (x min)
+3 #b (x max)
+0 #c (y min)
+3 #d (y max)
+
+#data:
+#point amount (EOF if need read until end of file or number if amount of points is fixed)
+EOF
+#points...
+-1 -1
+2 2
+0 0
+0 1
+1 0
+0.5 0.6
+-0.6 0.6
+0.111 0.44
