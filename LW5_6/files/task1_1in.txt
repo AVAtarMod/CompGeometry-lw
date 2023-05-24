@@ -1,10 +1,10 @@
-#a
+#a (x min)
 
-#b
+#b (x max)
 
-#c
+#c (y min)
 
-#d
+#d (y max)
 
 #data:
 #point amount

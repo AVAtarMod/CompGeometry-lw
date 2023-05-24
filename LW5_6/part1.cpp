@@ -6,16 +6,35 @@
 #include "lib_cppgeometry/Polygon.hpp"
 #include "part1.hpp"
 
-std::tuple<std::vector<Point>, std::vector<Point>> read(std::ifstream& in)
+Polygon makePolygonByArea(const std::pair<double, double>& x_minmax, const std::pair<double, double>& y_minmax) {
+    const Point a(x_minmax.first, y_minmax.first), b(x_minmax.second, y_minmax.first), c(x_minmax.second, y_minmax.second), d(x_minmax.first, y_minmax.second);
+    return Polygon(std::vector<Point>{a,b,c,d});
+}
+
+struct InputData {
+    Polygon polygon = Polygon(std::vector<Point>());
+    std::vector<Point> points;
+};
+
+InputData read(std::ifstream& in)
 {
-   int testsCount;
+   std::pair<double, double> x_minmax;
+   std::pair<double, double> y_minmax;
+   double area[4];
+   const size_t areaSize = 4;
    double x, y;
-   in >> testsCount;
-   std::tuple<std::vector<Point>, std::vector<Point>> out;
-   // for (int i = 0; i < testsCount; i++) {
-   //    in >> x >> y;
-   //    out[i] = Point(x, y);
-   // }
+   InputData out;
+   int len = 255;
+   std::string tmp;
+   tmp.resize(len);
+   for (size_t i = 0; i < areaSize; i++) {
+       in.getline(tmp.data(),len);
+       if (tmp.find_first_of('#') != tmp.npos) {
+           i--;
+           continue;
+       }
+       in >> area[i];
+   }
    return out;
 }
 
@@ -31,8 +50,8 @@ void task1_1()
       std::cerr << "File " << in_file << " not exist or not accessible\n";
    } else {
       auto data = read(in);
-      std::vector<Point>& polygon = std::get<0>(data);
-      std::vector<Point>& input = std::get<1>(data);
+      Polygon& polygon = data.polygon;
+      std::vector<Point>& input = data.points;
       std::cout << "Points in area: \n";
       for (auto&& i :
            Polygon(polygon).pointsInsidePolygon(input, Polygon::SIMPLE)) {
