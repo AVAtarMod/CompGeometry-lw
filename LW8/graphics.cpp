@@ -31,7 +31,7 @@ int max_iterations = 1000, m_x, m_y;
 Point mouse = Point(0, 0);
 int wheel = 0, prev_wheel = 0;
 
-CImg<unsigned char> img(width_px, height_px, 1, 3);
+CImg<unsigned char> img;
 CImgDisplay disp;
 
 Point buf(0, 0);
@@ -90,13 +90,12 @@ void printNewtonFractal()
 
 void printPlasmaFractal()
 {
-   CImg<unsigned char> img(513, 513, 1, 3);
    img = vectorToImg(Fractals::plasmaFractal(9));
    disp = CImgDisplay(img, " ", false);
 
    std::cout << "Press X to next image." << std::endl;
    while (!disp.is_closed()) {
-      if (disp.is_keyX()) {
+      if (disp.button() & 1) {
          img = vectorToImg(Fractals::plasmaFractal(9));
          disp.display(img);
          disp.wait(500);

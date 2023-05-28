@@ -38,4 +38,6 @@ target_link_libraries(main shared)
 
 if (UNIX)
    target_link_libraries(main X11)
+else()
+   #target_link_libraries(main "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/mspdbcore.dll")
 endif()
