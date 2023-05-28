@@ -1,3 +1,4 @@
+#include "lib_cppgeometry/Curve.hpp"
 #include "lib_cppgeometry/Polygon.hpp"
 #include "lib_cppgeometry/functions.hpp"
 
@@ -7,8 +8,11 @@ void test2();
 void test3();
 void test4();
 void test5();
+void curve_test1();
 
-bool almost_equal(LineSegment* source, LineSegment* result, double precision);
+bool almost_equal(LineSegment* source, LineSegment* result,
+                  double precision);
+bool almost_equal(const Point* source, const Point* result, double precision);
 
 int main(int argc, char const* argv[])
 {
@@ -17,6 +21,7 @@ int main(int argc, char const* argv[])
    test3();
    test4();
    test5();
+   curve_test1();
    return 0;
 }
 
@@ -29,12 +34,13 @@ void test1()
                                Point(4.52659, 9.77856) };
    auto i = Polygon(test);
    LineSegment segment(Point(4.79, 5.84), Point(9.85, 3.67));
-   auto ptr1 =
-     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::COHEN_SUTHERLAND);
-   auto ptr2 =
-     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
+   auto ptr1 = i.segmentInsidePolygon(
+     segment, Polygon::ClipSegmentMethod::COHEN_SUTHERLAND);
+   auto ptr2 = i.segmentInsidePolygon(
+     segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
 
-   auto ptr3 = i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::CYRUS_BECK);
+   auto ptr3 =
+     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::CYRUS_BECK);
    /** type: out
             (4.79, 5.84)
             (5.2, 5.66417)
@@ -95,19 +101,19 @@ void test3()
       nullptr (segment outside area)
     */
    auto segment = LineSegment(Point(8.31, 2.96), Point(4.91, 8.77));
-   auto ptr1 =
-     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::COHEN_SUTHERLAND);
+   auto ptr1 = i.segmentInsidePolygon(
+     segment, Polygon::ClipSegmentMethod::COHEN_SUTHERLAND);
 
-   auto ptr2 =
-     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
+   auto ptr2 = i.segmentInsidePolygon(
+     segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
 
-   auto ptr3 = i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::CYRUS_BECK);
+   auto ptr3 =
+     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::CYRUS_BECK);
    if (ptr1 != nullptr || ptr2 != nullptr || ptr3 != nullptr) {
-      std::cerr << (
-        "test " + testNum + " error (" +
-        ((ptr1 == nullptr) ? std::string("ptr1=null") : "") +
-        ((ptr2 == nullptr) ? std::string("ptr2=null ") : "") +
-        ((ptr3 == nullptr) ? std::string("ptr3=null ") : "") + ")");
+      std::cerr << ("test " + testNum + " error (" +
+                    ((ptr1 == nullptr) ? std::string("ptr1=null") : "") +
+                    ((ptr2 == nullptr) ? std::string("ptr2=null ") : "") +
+                    ((ptr3 == nullptr) ? std::string("ptr3=null ") : "") + ")");
    } else {
       std::cout << "test " + testNum + " success\n";
    }
@@ -124,8 +130,8 @@ void test4()
    auto i = Polygon(test);
    // All segment must be inside polygon
    auto segment = LineSegment(Point(7.17, 8.79), Point(6.68, 8.71));
-   auto ptr =
-     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
+   auto ptr = i.segmentInsidePolygon(
+     segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
    if (!almost_equal(&segment, ptr.get(), precision)) {
       std::cerr << ("test " + testNum + " failed\n");
    } else {
@@ -133,7 +139,8 @@ void test4()
    }
 }
 
-bool almost_equal(LineSegment* source, LineSegment* result, double precision)
+bool almost_equal(LineSegment* source, LineSegment* result,
+                  double precision)
 {
    bool pre = (result == nullptr && source == nullptr);
    return pre ||
@@ -146,6 +153,14 @@ bool almost_equal(LineSegment* source, LineSegment* result, double precision)
            areEqual(source->getEnd()["y"], result->getEnd()["y"], precision));
 }
 
+bool almost_equal(const Point* source, const Point* result, double precision)
+{
+   bool pre = (result == nullptr && source == nullptr);
+   return pre || (result != nullptr && source != nullptr &&
+                  areEqual((*source)["x"], (*result)["x"], precision) &&
+                  areEqual((*source)["y"], (*result)["y"], precision));
+}
+
 void test5()
 {
    std::string testNum = "5";
@@ -155,12 +170,13 @@ void test5()
                                Point(7.87263, 10.1734) };
    auto i = Polygon(test);
    LineSegment segment(Point(8.51, 6.84), Point(2.38, 7.88));
-   auto ptr1 =
-     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::COHEN_SUTHERLAND);
-   auto ptr2 =
-     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
+   auto ptr1 = i.segmentInsidePolygon(
+     segment, Polygon::ClipSegmentMethod::COHEN_SUTHERLAND);
+   auto ptr2 = i.segmentInsidePolygon(
+     segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
 
-   auto ptr3 = i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::CYRUS_BECK);
+   auto ptr3 =
+     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::CYRUS_BECK);
    /** type: out
             (8.51, 6.84)
             (7.87263, 6.94813)
@@ -178,6 +194,26 @@ void test5()
    if (!method3)
       str += "CYRUS_BECK ";
    if (!method1 || !method2 || !method3) {
+      std::cerr << ("test " + testNum + " error: " + str + "failed\n");
+   } else {
+      std::cout << "test " + testNum + " success\n";
+   }
+}
+
+void curve_test1()
+{
+   std::string testNum = "curve::1";
+   Point a(0, 0), b(0, 3), c(3, 3), d(3, 0);
+   Curve out3 = Curve::makeBezierCurve(a, b, c);
+   Curve out4 = Curve::makeBezierCurve(a, b, c, d);
+   bool method3 = almost_equal(&out3[out4.size() - 1], &c, precision),
+        method4 = almost_equal(&out4[out4.size() - 1], &d, precision);
+   std::string str = "";
+   if (!method3)
+      str += "QUADRATIC ";
+   if (!method4)
+      str += "CUBIC ";
+   if (!method3 || !method4) {
       std::cerr << ("test " + testNum + " error: " + str + "failed\n");
    } else {
       std::cout << "test " + testNum + " success\n";

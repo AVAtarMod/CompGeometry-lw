@@ -1,3 +1,4 @@
+#include "lib_cppgeometry/Curve.hpp"
 #include "lib_cppgeometry/Point.hpp"
 #include "lib_cppgeometry/Polygon.hpp"
 
@@ -86,5 +87,19 @@ PYBIND11_MODULE(lib_cppgeometry_wrapper, m)
             Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND)
      .value("CYRUS_BECK", Polygon::ClipSegmentMethod::CYRUS_BECK)
      .export_values();
+
+   py::class_<Curve>(m, "Curve")
+     .def(py::init<const std::vector<Point>&>())
+     .def("size", &Curve::size)
+     .def("__len__", &Curve::size)
+     .def("__getitem__", &Curve::operator[])
+     .def("makeBezierCurveQuadratic",
+          py::overload_cast<const Point&, const Point&, const Point&>(
+            &Curve::makeBezierCurve))
+     .def(
+       "makeBezierCurveCubic",
+       py::
+         overload_cast<const Point&, const Point&, const Point&, const Point&>(
+           &Curve::makeBezierCurve));
    py::bind_vector<std::vector<Point>>(m, "VectorPoint");
 }
