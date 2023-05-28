@@ -5,31 +5,37 @@ if (NOT "$ENV{CMAKE_DEFAULT_INCLUDE_PATH}" STREQUAL "")
     set(CMAKE_DEFAULT_INCLUDE_PATH "$ENV{CMAKE_DEFAULT_INCLUDE_PATH}" CACHE INTERNAL "Path for external projects and dependencies")
     file(TO_CMAKE_PATH ${CMAKE_DEFAULT_INCLUDE_PATH} CMAKE_DEFAULT_INCLUDE_PATH)
 else()
-   message(FATAL_ERROR "Cannot find external projects path. Set CMAKE_DEFAULT_INCLUDE_PATH environment variable")
+   message(FATAL_ERROR "Cannot find exernal projects path. Set CMAKE_DEFAULT_INCLUDE_PATH environment variable")
    return()
 endif()
 
-file(TO_CMAKE_PATH ${PROJECT_SOURCE_DIR} LWLib)
-set(LWLib "${LWLib}/../lib")
-
-set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ version selection")  # or 11, 14, 17, 20
-set(CMAKE_CXX_STANDARD_REQUIRED ON)  # optional, ensure standard is supported
+set (CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)  # optional, keep compiler extensions off
 
-file(GLOB library_sources ${CMAKE_DEFAULT_INCLUDE_PATH}/lib_cppgeometry/*.cpp)
+# Export no symbols by default (if the compiler supports it).
+# This makes e.g. GCC's "visibility behavior" consistent with MSVC's. 
+# On Windows/MSVC this is a noop.
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
-add_subdirectory("${LWLib}/wrapper" wrapper)
-
-add_custom_command(OUTPUT python_dependencies
-    COMMAND pip install  -r requirements.txt
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMENT "${PROJECT_NAME} Installing python dependencies..."
-)
-add_custom_target(${PROJECT_NAME} ALL DEPENDS python_dependencies lib_cppgeometry_wrapper)
-
+# Always include the source and build directories in the include path.
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # create the executable
-add_executable(main ${LWLib}/wrapper/main.cpp)
- 
+add_executable(main main.cpp graphics.cpp)
+
+# Copy resources to build dir
+if (EXISTS ${PROJECT_SOURCE_DIR}/files)
+   file(GLOB_RECURSE data files/*)
+   foreach(file ${data})
+      configure_file(${file} . COPYONLY)
+   endforeach()
+endif()
+
+add_subdirectory(${CMAKE_DEFAULT_INCLUDE_PATH}/lib_cppgeometry geometry_lib_bin)
 target_include_directories(main PUBLIC ${CMAKE_DEFAULT_INCLUDE_PATH})
 target_link_libraries(main shared)
+
+if (UNIX)
+   target_link_libraries(main X11)
+endif()
