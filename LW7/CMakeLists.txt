@@ -16,8 +16,6 @@ set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ version selection")  # or 11, 14, 17
 set(CMAKE_CXX_STANDARD_REQUIRED ON)  # optional, ensure standard is supported
 set(CMAKE_CXX_EXTENSIONS OFF)  # optional, keep compiler extensions off
 
-file(GLOB library_sources ${CMAKE_DEFAULT_INCLUDE_PATH}/lib_cppgeometry/*.cpp)
-
 add_subdirectory("${LWLib}/wrapper" wrapper)
 
 add_custom_command(OUTPUT python_dependencies
@@ -30,6 +28,6 @@ add_custom_target(${PROJECT_NAME} ALL DEPENDS python_dependencies lib_cppgeometr
 
 # create the executable
 add_executable(main ${LWLib}/wrapper/main.cpp)
- 
 target_include_directories(main PUBLIC ${CMAKE_DEFAULT_INCLUDE_PATH})
 target_link_libraries(main shared)
+ 
