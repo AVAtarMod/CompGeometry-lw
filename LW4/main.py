@@ -124,7 +124,7 @@ def set_callbacks():
 
 
 def viewport():
-   dpg.create_viewport(title='ConvexHull GUI',
+   dpg.create_viewport(title='Clip segment GUI',
                        width=1000, height=600)
 
 
