@@ -4,7 +4,7 @@ from math import pi, sin, cos
 
 # some constants
 FPS = 10
-WINDOW_SIZE = [400, 400]
+WINDOW_SIZE = [1000, 600]
 LINE_WIDTH = 1
 MIN_LINE_LENGTH = 1  # when to terminate recursion
 
