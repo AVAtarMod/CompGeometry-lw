@@ -7,11 +7,6 @@
 #include "lib_cppgeometry/Polygon.hpp"
 #include "part2.hpp"
 
-struct InputData
-{
-   std::vector<std::vector<std::pair<int, int>>> time_segments;
-};
-
 struct IOChar
 {
    char data = '\0';
@@ -135,14 +130,18 @@ std::string next_line(std::istream& in, const size_t line_length)
    return result;
 };
 
-InputData read(std::istream& in)
+std::vector<std::pair<int, int>> read(std::istream& in)
 {
-   InputData out;
+   std::vector<std::pair<int, int>> out;
    try {
-
+      out.reserve(255);
+      while (true) {
+         std::pair<int, int> tmp;
+         tmp.first = next_number(in);
+         tmp.second = next_number(in);
+         out.push_back(tmp);
+      }
    } catch (const std::exception& e) {
-      std::cerr << "Invalid file format. Error: " << e.what() << '\n';
-      exit(EXIT_FAILURE);
    }
 
    return out;
@@ -155,7 +154,13 @@ void task(const char* in_file)
    if (!in) {
       std::cerr << "File " << in_file << " not exist or not accessible\n";
    } else {
-      
+      const size_t files_amount = static_cast<size_t>(next_number(in));
+      std::vector<std::vector<std::pair<int, int>>> time_segments(files_amount);
+      for (size_t i = 0; i < files_amount; ++i) {
+         std::ifstream current(next_line(in, 255));
+         time_segments[i] = read(current);
+      }
+      int ie = 0;
    }
    in.close();
 }
