@@ -6,6 +6,7 @@ int main(int argc, char* argv[])
    std::cout << "(1) Mandelbrot set\n"
              << "(2) Newton fractal\n"
              << "(3) Plasma fractal\n"
+             << "(4) Koch Snowflake fractal\n"
              << ">> ";
    std::cin >> ind;
    clearScreen();
@@ -18,6 +19,9 @@ int main(int argc, char* argv[])
          break;
       case 3:
          printPlasmaFractal();
+         break;
+      case 4:
+         printCochSnowflakeFractal();
          break;
    }
 }

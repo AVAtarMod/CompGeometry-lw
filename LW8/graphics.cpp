@@ -153,3 +153,63 @@ void mouseWheelHandler()
    controlToCartesian(mouse, p1);
    focusDif(p[0] - p1[0], p[1] - p1[1]);
 }
+
+Point multiple(const Point& p, double multiplier)
+{
+   Point result(p.size());
+   for (size_t i = 0; i < p.size(); ++i) {
+      result[i] = p[i] * multiplier;
+   }
+   return result;
+}
+
+void printCochSnowflakeFractal()
+{
+   img = CImg<unsigned char>(1024, 1024, 1, 3);
+   auto vector = Fractals::geometricFractal(
+     Point(100, 100),
+     Fractals::Area(1920, 1080, { -1000, 1000 }, { -1000, 1000 }),
+     Fractals::GeometricFractalType::KOCH_SNOWFLAKE);
+   size_t size = vector.size();
+   const unsigned char color[] = { 255, 255, 255 };
+   for (size_t i = 0; i < size - 1; ++i) {
+      vector[i] = multiple(vector[i], 7);
+      img.draw_line(vector[i]["x"],
+                    vector[i]["y"],
+                    vector[i + 1]["x"],
+                    vector[i + 1]["y"],
+                    color);
+   }
+
+   disp = CImgDisplay(img, " ", false);
+
+   while (!disp.is_closed()) {
+      m_x = disp.mouse_x();
+      m_y = disp.mouse_y();
+      mouse[0] = m_x;
+      mouse[1] = m_y;
+      wheel = disp.wheel();
+      if (wheel - prev_wheel != 0) {
+         prev_wheel = wheel;
+         mouseWheelHandler();
+         img = CImg(1024, 1024, 1, 3);
+         vector = Fractals::geometricFractal(
+           Point(100, 100),
+           Fractals::Area(
+             width_px, height_px, { -width, width }, { -height, height }),
+           Fractals::GeometricFractalType::KOCH_SNOWFLAKE);
+         size = vector.size();
+         for (size_t i = 0; i < size - 1; ++i) {
+            img.draw_line(vector[i]["x"],
+                          vector[i]["y"],
+                          vector[i + 1]["x"],
+                          vector[i + 1]["y"],
+                          color);
+         }
+      }
+      clearScreen();
+      controlToCartesian(mouse, buf);
+      std::cout << buf << std::endl;
+      disp.display(img);
+   }
+}

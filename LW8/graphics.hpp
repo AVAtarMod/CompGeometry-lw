@@ -15,3 +15,4 @@ void clearScreen();
 void printMandelbrotSet();
 void printNewtonFractal();
 void printPlasmaFractal();
+void printCochSnowflakeFractal();
