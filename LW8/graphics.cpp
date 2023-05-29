@@ -93,7 +93,7 @@ void printPlasmaFractal()
    img = vectorToImg(Fractals::plasmaFractal(9));
    disp = CImgDisplay(img, " ", false);
 
-   std::cout << "Press X to next image." << std::endl;
+   std::cout << "Press LMB to next image." << std::endl;
    while (!disp.is_closed()) {
       if (disp.button() & 1) {
          img = vectorToImg(Fractals::plasmaFractal(9));
@@ -102,6 +102,19 @@ void printPlasmaFractal()
       } else
          disp.display(img);
    }
+}
+
+void printKochSnowflake()
+{
+    
+}
+
+void printPythagorasTreeClassic() {
+
+}
+
+void printPythagorasTreeNaked() {
+
 }
 
 CImg<unsigned char> vectorToImg(const std::vector<std::vector<RGB>>& vec)
