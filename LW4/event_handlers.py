@@ -111,9 +111,12 @@ class ButtonHandlers:
          polygon = l.Polygon(l.VectorPoint(
              points))
          raw_segment = l.LineSegment(raw_points[0], raw_points[1])
-         out_segment = polygon.segmentInsidePolygon(
-             raw_segment, method_map[current_method])
-
+         out_segment = None
+         try:
+            out_segment = polygon.segmentInsidePolygon(
+               raw_segment, method_map[current_method])
+         except Exception as e:
+            notify_procedure(f"Ошибка при вычислении: {e}")
          ui_clear_box(_plot_clip_points['out'], _plot_clip_series['out'])
          _plot_clip_series['out'] = 0
 
@@ -257,6 +260,7 @@ class PointHandlers:
          if label[0:2] == clip_point_suffix:
             ui_clear_box(_plot_clip_points['out'],
                          _plot_clip_series['out'], sender)
+            _plot_clip_series['out'] = 0
             for series in _plot_clip_series:
                dpg_try_delete_item(_plot_clip_series[series])
                _plot_clip_series[series] = 0
