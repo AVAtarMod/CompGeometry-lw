@@ -1,8 +1,10 @@
 #include "lib_cppgeometry/Curve.hpp"
+#include "lib_cppgeometry/Fractals.hpp"
 #include "lib_cppgeometry/Point.hpp"
 #include "lib_cppgeometry/Polygon.hpp"
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
 
 #ifndef NDEBUG
@@ -11,30 +13,57 @@
 
 namespace py = pybind11;
 
-std::vector<Point> getConvexHull(const std::vector<Point>& points,
-                                 const Polygon::ConvexHullMethod& m)
+PYBIND11_MAKE_OPAQUE(std::vector<Point>);
+PYBIND11_MAKE_OPAQUE(std::pair<double, double>);
+
+void pp(std::pair<int, int> p)
+{
+   std::cout << "pp: p is ( " << p.first << " " << p.second << ")\n";
+}
+
+std::unique_ptr<LineSegment> clipSegment(Polygon* this_, const LineSegment& ls,
+                                         const Polygon::ClipSegmentMethod& m)
 {
 
-#ifndef NDEBUG
-   std::cout << "Received:\n";
-   for (auto&& i : points) {
-      std::cout << i << "\n";
-   }
-#endif
+   std::cout << "WRAPPER clipSegment: Received:\n\t";
+   std::cout << ls.getBegin() << "\n\t" << ls.getEnd() << "\n";
 
-   auto result = Polygon::convexHull(points, m).get();
+   auto result = this_->segmentInsidePolygon(ls, m);
 
-#ifndef NDEBUG
-   std::cout << "Convex hull:\n";
-   for (auto&& i : result) {
-      std::cout << i << "\n";
+   std::cout << "WRAPPER clipSegment: Result:\n\t";
+   if (result == nullptr)
+      std::cout << "Null\n";
+   else {
+      std::cout << (*result).getBegin() << "\n\t" << (*result).getEnd() << "\n";
    }
-#endif
+   return result;
+}
+/**
+static std::vector<Point> Fractals::geometricFractal(const Point &p, const
+Fractals::Area &area, Fractals::GeometricFractalType t)
+ */
+std::vector<Point> geometricFractal(const Point& p, size_t w, size_t h,
+                                    double min_x, double max_x, double min_y,
+                                    double max_y,
+                                    Fractals::GeometricFractalType t)
+{
+   std::cout << "WRAPPER geometricFractal: Received:\n\t";
+   std::cout << p << " h_px=" << h << " w_px=" << w << " x=(" << min_x << ", "
+             << max_x << ") y=(" << min_y << ", " << max_y << ")"
+             << "\n";
+
+   auto result = Fractals::geometricFractal(
+     p, Fractals::Area(w, h, { min_x, max_x }, { min_y, max_y }), t);
+
+   std::cout << "WRAPPER geometricFractal: Result:\n\t";
+   if (result.size() == 0)
+      std::cout << "Null\n";
+   else {
+      std::cout << "Vector, size =" << result.size() << "\n";
+   }
 
    return result;
 }
-
-PYBIND11_MAKE_OPAQUE(std::vector<Point>);
 
 PYBIND11_MODULE(lib_cppgeometry_wrapper, m)
 {
@@ -59,7 +88,8 @@ PYBIND11_MODULE(lib_cppgeometry_wrapper, m)
              self[name] = value;
           })
      .def("__str__", &Point::to_string)
-     .def("__eq__", &Point::operator==);
+     .def("__eq__", &Point::operator==)
+     .def("pp", &pp);
 
    py::class_<LineSegment>(m, "LineSegment")
      .def(py::init<const Point&, const Point&>())
@@ -69,8 +99,8 @@ PYBIND11_MODULE(lib_cppgeometry_wrapper, m)
 
    py::class_<Polygon>(m, "Polygon")
      .def(py::init<const std::vector<Point>&>(), "Construct N-point Polygon")
-     .def("convexHull", &getConvexHull)
-     .def("segmentInsidePolygon", &Polygon::segmentInsidePolygon)
+     .def("convexHull", &Polygon::convexHull)
+     .def("segmentInsidePolygon", &clipSegment)
      .def("size", &Polygon::size)
      .def("__len__", &Polygon::size)
      .def("get", &Polygon::get)
@@ -101,5 +131,17 @@ PYBIND11_MODULE(lib_cppgeometry_wrapper, m)
        py::
          overload_cast<const Point&, const Point&, const Point&, const Point&>(
            &Curve::makeBezierCurve));
+
+   py::class_<Fractals>(m, "Fractals")
+     .def("geometricFractal", &geometricFractal);
+
+   py::enum_<Fractals::GeometricFractalType>(m, "GeometricFractalType")
+     .value("KOCH_SNOWFLAKE", Fractals::GeometricFractalType::KOCH_SNOWFLAKE)
+     .value("PYTHAGORAS_TREE_CLASSIC",
+            Fractals::GeometricFractalType::PYTHAGORAS_TREE_CLASSIC)
+     .value("PYTHAGORAS_TREE_NAKED",
+            Fractals::GeometricFractalType::PYTHAGORAS_TREE_NAKED)
+     .export_values();
+
    py::bind_vector<std::vector<Point>>(m, "VectorPoint");
 }

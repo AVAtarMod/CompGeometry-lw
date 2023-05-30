@@ -1,6 +1,7 @@
 #include "lib_cppgeometry/Curve.hpp"
 #include "lib_cppgeometry/Polygon.hpp"
 #include "lib_cppgeometry/functions.hpp"
+#include "lib_cppgeometry/Fractals.hpp"
 
 const double precision = 0.5;
 void test1();
@@ -8,10 +9,12 @@ void test2();
 void test3();
 void test4();
 void test5();
+void test6();
+void test7();
+void frac_test1();
 void curve_test1();
 
-bool almost_equal(LineSegment* source, LineSegment* result,
-                  double precision);
+bool almost_equal(LineSegment* source, LineSegment* result, double precision);
 bool almost_equal(const Point* source, const Point* result, double precision);
 
 int main(int argc, char const* argv[])
@@ -21,7 +24,11 @@ int main(int argc, char const* argv[])
    test3();
    test4();
    test5();
+   test6();
+   test7();
    curve_test1();
+   frac_test1();
+
    return 0;
 }
 
@@ -139,8 +146,7 @@ void test4()
    }
 }
 
-bool almost_equal(LineSegment* source, LineSegment* result,
-                  double precision)
+bool almost_equal(LineSegment* source, LineSegment* result, double precision)
 {
    bool pre = (result == nullptr && source == nullptr);
    return pre ||
@@ -200,6 +206,81 @@ void test5()
    }
 }
 
+void test6()
+{
+   std::string testNum = "6";
+   std::vector<Point> test = { Point(0.22, 5.82167),
+                               Point(4.81551, 5.82167),
+                               Point(4.81551, 0.13),
+                               Point(0.22, 0.13) };
+   auto i = Polygon(test);
+   LineSegment segment(Point(4.47, 9.39), Point(0.2, 0.65));
+   auto ptr1 = i.segmentInsidePolygon(
+     segment, Polygon::ClipSegmentMethod::COHEN_SUTHERLAND);
+   auto ptr2 = i.segmentInsidePolygon(
+     segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
+   auto ptr3 =
+     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::CYRUS_BECK);
+   /** type: out
+               (2.64279, 5.65)
+               (0.22, 0.690937)
+    */
+   auto answer =
+     std::make_unique<LineSegment>(Point(2.64279, 5.65), Point(0.22, 0.690937));
+   bool method1 = almost_equal(answer.get(), ptr1.get(), precision),
+        method2 = almost_equal(answer.get(), ptr2.get(), precision),
+        method3 = almost_equal(answer.get(), ptr3.get(), precision);
+   std::string str = "";
+   if (!method1)
+      str += "COHEN_SUTHERLAND ";
+   if (!method2)
+      str += "SPROULE_SUTHERLAND ";
+   if (!method3)
+      str += "CYRUS_BECK ";
+   if (!method1 || !method2 || !method3) {
+      std::cerr << ("test " + testNum + " error: " + str + "failed\n");
+   } else {
+      std::cout << "test " + testNum + " success\n";
+   }
+}
+
+void test7()
+{
+   std::string testNum = "7";
+   std::vector<Point> test = { Point(0.607989, 3.84617),
+                               Point(3.30436, 3.84617),
+                               Point(3.30436, 8.92549),
+                               Point(0.607989, 8.92549) };
+   auto i = Polygon(test);
+   LineSegment segment(Point(-0.740197, 9.51157), Point(8.36, 3.82));
+   auto ptr1 = i.segmentInsidePolygon(
+     segment, Polygon::ClipSegmentMethod::COHEN_SUTHERLAND);
+   auto ptr2 = i.segmentInsidePolygon(
+     segment, Polygon::ClipSegmentMethod::SPROULE_SUTHERLAND);
+   auto ptr3 =
+     i.segmentInsidePolygon(segment, Polygon::ClipSegmentMethod::CYRUS_BECK);
+   /** type: out
+         (8.46659, 8.8699)
+         (3.48143, 6.12654)
+    */
+   auto answer = std::make_unique<LineSegment>(Point(0.607989, 8.66837),
+                                               Point(3.30436, 6.98197));
+   bool method1 = almost_equal(answer.get(), ptr1.get(), precision),
+        method2 = almost_equal(answer.get(), ptr2.get(), precision),
+        method3 = almost_equal(answer.get(), ptr3.get(), precision);
+   std::string str = "";
+   if (!method1)
+      str += "COHEN_SUTHERLAND ";
+   if (!method2)
+      str += "SPROULE_SUTHERLAND ";
+   if (!method3)
+      str += "CYRUS_BECK ";
+   if (!method1 || !method2 || !method3) {
+      std::cerr << ("test " + testNum + " error: " + str + "failed\n");
+   } else {
+      std::cout << "test " + testNum + " success\n";
+   }
+}
 void curve_test1()
 {
    std::string testNum = "curve::1";
@@ -218,4 +299,12 @@ void curve_test1()
    } else {
       std::cout << "test " + testNum + " success\n";
    }
+}
+
+void frac_test1()
+{
+   auto vector = Fractals::geometricFractal(
+     Point(0, 0),
+     Fractals::Area(1920, 1080, { -100, 100 }, { -100, 100 }),
+     Fractals::GeometricFractalType::KOCH_SNOWFLAKE);
 }
