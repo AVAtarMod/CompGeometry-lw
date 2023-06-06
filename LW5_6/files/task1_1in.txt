@@ -5,7 +5,7 @@
 #c (y min)
 0
 #d (y max)
-4
+3
 #data:
 #point amount (EOF if need read until end of file or number if amount of points is fixed)
 2
@@ -16,4 +16,3 @@
 2.5 1.1
 5 3
 1 4
--1 0
